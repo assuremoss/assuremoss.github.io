@@ -3,7 +3,6 @@ const app = Vue.createApp({
         return {
             cvssConfigData: cvssConfig,
             cvssLookupData: cvssLookup,
-            maxLookupData: maxLookup,
             maxComposedData: maxComposed,
             cvssMacroVectorDetailsData: cvssMacroVectorDetails,
             cvssMacroVectorValuesData: cvssMacroVectorValues,
