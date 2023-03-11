@@ -4,6 +4,7 @@ const app = Vue.createApp({
             cvssConfigData: cvssConfig,
             cvssLookupData: cvssLookup,
             maxLookupData: maxLookup,
+            maxComposedData: maxComposed,
             cvssMacroVectorDetailsData: cvssMacroVectorDetails,
             cvssMacroVectorValuesData: cvssMacroVectorValues,
             showDetails: false,
@@ -12,6 +13,11 @@ const app = Vue.createApp({
         }
     },
     methods: {
+        getvalueEqLookup(lookup,i){ 
+            eq=parseInt(lookup[i])
+            eq_val = maxComposed["eq"+String(i+1)][eq]
+            return eq_val
+        },
         extractValueMetric(metric,str){
             //indexOf gives first index of the metric, we then need to go over its size
             extracted = str.slice(str.indexOf(metric) + metric.length + 1)
@@ -278,6 +284,10 @@ const app = Vue.createApp({
             SI_levels={'S':0, 'H':1, 'L':2, 'N':3}
             SA_levels={'S':0, 'H':1, 'L':2, 'N':3}
 
+            CR_levels={'H':0, 'M':1, 'L':2}
+            IR_levels={'H':0, 'M':1, 'L':2}
+            AR_levels={'H':0, 'M':1, 'L':2}
+
             step = 0.1
             lookup = this.macroVector
             // Exception for no impact on system
@@ -285,8 +295,29 @@ const app = Vue.createApp({
                 return "0.0"
             }
             value = this.cvssLookupData[lookup]
-            //get the configuration of the max
-            max_vectors = this.maxLookupData[lookup]
+
+            eq1_maxes = this.getvalueEqLookup(lookup,0)
+            eq2_maxes = this.getvalueEqLookup(lookup,1)
+            eq3_maxes = this.getvalueEqLookup(lookup,2)
+            eq4_maxes = this.getvalueEqLookup(lookup,3)
+            eq5_maxes = this.getvalueEqLookup(lookup,4)
+            eq6_maxes = this.getvalueEqLookup(lookup,5)
+
+            max_vectors = []
+            for (eq1_max of eq1_maxes){
+                for (eq2_max of eq2_maxes){
+                    for (eq3_max of eq3_maxes){
+                        for (eq4_max of eq4_maxes){
+                            for (eq5max of eq5_maxes){
+                                for (eq6_max of eq6_maxes){
+                                    max_vectors.push(eq1_max+eq2_max+eq3_max+eq4_max+eq5max+eq6_max)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             if (max_vectors==undefined){
                 alert("Currently disabled")
                 return "0.0"
@@ -328,14 +359,12 @@ const app = Vue.createApp({
                 }
                 hamming_distance_SC = SC_levels[this.m("SC")]-SC_levels[this.extractValueMetric("SC",tmp_vector)]
 
+                hamming_distance_CR = CR_levels[this.m("CR")]-CR_levels[this.extractValueMetric("CR",tmp_vector)]
+                hamming_distance_IR = IR_levels[this.m("IR")]-IR_levels[this.extractValueMetric("IR",tmp_vector)]
+                hamming_distance_AR = AR_levels[this.m("AR")]-AR_levels[this.extractValueMetric("AR",tmp_vector)]   
    
-                console.log(hamming_distance_SC)
-                console.log(hamming_distance_SI)
-                console.log(hamming_distance_SA)
-   
-
                 //if any is less than zero this is not the right max
-                if (hamming_distance_AV<0 || hamming_distance_PR<0 || hamming_distance_UI<0 || hamming_distance_AC<0 || hamming_distance_AT<0 || hamming_distance_VC<0 || hamming_distance_VI<0 || hamming_distance_VA<0 || hamming_distance_SC<0 || hamming_distance_SI<0 || hamming_distance_SA<0) {
+                if (hamming_distance_AV<0 || hamming_distance_PR<0 || hamming_distance_UI<0 || hamming_distance_AC<0 || hamming_distance_AT<0 || hamming_distance_VC<0 || hamming_distance_VI<0 || hamming_distance_VA<0 || hamming_distance_SC<0 || hamming_distance_SI<0 || hamming_distance_SA<0 || hamming_distance_CR || hamming_distance_IR || hamming_distance_AR) {
                     continue
                 }
                 else{
@@ -344,10 +373,8 @@ const app = Vue.createApp({
                     break
                 }
             }
-            console.log(tmp_vector)
 
-
-            sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA
+            sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
 
             value = parseFloat(value) - parseFloat(step*sum_hamming_distance)
 
