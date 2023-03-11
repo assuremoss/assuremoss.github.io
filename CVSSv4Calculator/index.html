@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-        <title>CVSS v4.0 calculator – DRAFT</title>
+        <title>CVSS v4.0 calculator – DRAFT (Max ELO Score - 0.1 *Hamming Distance)</title>
         <script src="https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js"></script>
         <script src="cvss_config.js?v=2"></script>
         <script src="cvss_details.js?v=1"></script>
@@ -18,7 +18,8 @@
     <body>
         <div id="app" class="container">
             <div id="header">
-                <h4>CVSS v4.0 calculator – DRAFT</h4>
+                <h4>CVSS v4.0 calculator – DRAFT (Max ELO Score - 0.1 *Hamming Distance) </h4>
+                <h5> Look and feel from <A HREF="https://redhatproductsecurity.github.io/cvss-v4-calculator">Redhat draft calculator</A></h5> 
                 <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
                     {{ vector }}
                 </mark>
