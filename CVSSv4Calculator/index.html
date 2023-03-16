@@ -18,13 +18,15 @@
     <body>
         <div id="app" class="container">
             <div id="header">
-                <h4>CVSS v4.0 calculator – DRAFT (Max ELO Score - 0.1 *Hamming Distance)</h4>
-                <h5> Look and feel from <A HREF="https://redhatproductsecurity.github.io/cvss-v4-calculator">Redhat draft calculator</A>,  Calculator 0 in Peter's tool</h5>
+                <h4>CVSS v4.0 calculator – DRAFT</h4>
+                <h5> Look and feel from <A HREF="https://redhatproductsecurity.github.io/cvss-v4-calculator">Redhat</A>. Source code <A HREF="https://github.com/assuremoss/assuremoss.github.io/tree/main/CVSSv4Calculator">here</A> </h5>
                 <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
                     {{ vector }}
                 </mark>
                 <button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
                 <br>
+                <h5>Calculation: ELO(highest severity vector in the macro vector) - Hamming Distance from to be scored vector</h5>
+                <h6>Default is 0.1*Hamming Distance - Tick the checkbox for ELO Weighted Hamming Distance</h6>
                 <input type = "checkbox" id="weighted_checkbox" @click="onClick()"> Weighted Hamming Distance
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
