@@ -1,3 +1,8 @@
+/**
+ * Forked from https://github.com/RedHatProductSecurity/cvss-v4-calculator
+ * @author Fabio Massacci (University of Trento and Vrije Universiteit Amsterdam) and Giorgio Di Tizio (University of Trento)
+ */
+
 cvssLookup = {
 "000000":"10",
  "000001":"10",
