@@ -1,6 +1,7 @@
 /**
  * Forked from https://github.com/RedHatProductSecurity/cvss-v4-calculator
  * Max computed by Fabio Massacci and Giorgio Di Tizio from data by Jonathan Spring (DHS) and Peter Mell (NIST) 
+ * eq3 merges EQ3 and EQ6 from the SIG
  */
 
 maxComposed = {
