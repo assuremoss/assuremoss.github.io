@@ -1,6 +1,6 @@
 /**
  * Forked from https://github.com/RedHatProductSecurity/cvss-v4-calculator
- * Max Extracted by Fabio Massacci and Giorgio Di Tizio from data by Jonathan Spring (DHS) and Peter Mell (NIST) 
+ * Max computed by Fabio Massacci and Giorgio Di Tizio from data by Jonathan Spring (DHS) and Peter Mell (NIST) 
  */
 
 maxComposed = {
