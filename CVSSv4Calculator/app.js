@@ -1,6 +1,7 @@
 /**
  * Forked from https://github.com/RedHatProductSecurity/cvss-v4-calculator
- * @author Fabio Massacci (University of Trento and Vrije Universiteit Amsterdam) and Giorgio Di Tizio (University of Trento)
+ * BaseScore algorithm from Fabio Massacci (University of Trento and Vrije Universiteit Amsterdam) and Giorgio Di Tizio (University of Trento)
+ * Data for the Weighted Hamming Distance by Ben Edwards (Cyenthia)
  */
 
 const app = Vue.createApp({
