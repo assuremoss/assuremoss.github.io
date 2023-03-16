@@ -1,7 +1,7 @@
 /**
  * Forked from https://github.com/RedHatProductSecurity/cvss-v4-calculator
- * @author Fabio Massacci (University of Trento and Vrije Universiteit Amsterdam) and Giorgio Di Tizio (University of Trento)
- * @data from Ben Edwards (Cyenthia), Peter Mell (NIST)
+ * @author Giorgio Di Tizio (University of Trento)
+ * @data   Ben Edwards (Cyenthia), Peter Mell (NIST)
  */
 
 cvssLookup = {
