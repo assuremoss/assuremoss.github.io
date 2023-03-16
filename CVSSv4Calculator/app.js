@@ -8,7 +8,8 @@ const app = Vue.createApp({
             cvssMacroVectorValuesData: cvssMacroVectorValues,
             showDetails: false,
             cvssSelected: null,
-            header_height: 0
+            header_height: 0,
+            isChecked: false
         }
     },
     methods: {
@@ -111,6 +112,9 @@ const app = Vue.createApp({
         },
         onReset() {
             window.location.hash = ""
+        },
+        onClick() {
+            this.isChecked = document.getElementById('weighted_checkbox').checked
         },
         resetSelected() {
             this.cvssSelected = {}
@@ -268,26 +272,50 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
-            AV_levels={"N": 0, "A": 1, "L": 2, "P": 3}
-            PR_levels={"N": 0, "L": 1, "H": 2}
-            UI_levels={"N": 0, "P": 1, "A": 2}
+            if(this.isChecked){
+                AV_levels={"P": 2.0619,"L": 1.3112,"A": 0.5254,"N": 0}
+                PR_levels={"H": 0.4821,"L": 0.1504,"N": 0}
+                UI_levels={"A": 0.3296,"P": 0.194,"N": 0}
 
-            AC_levels={'L':0, 'H':1}
-            AT_levels={'N':0, 'P':1}
-        
-            VC_levels={'H':0, 'L':1, 'N':2}
-            VI_levels={'H':0, 'L':1, 'N':2}
-            VA_levels={'H':0, 'L':1, 'N':2}    
+                AC_levels={"H": 0.3209,"L": 0}
+                AT_levels={"P": 0.1865,"N": 0}
 
-            SC_levels={'H':1, 'L':2, 'N':3}
-            SI_levels={'S':0, 'H':1, 'L':2, 'N':3}
-            SA_levels={'S':0, 'H':1, 'L':2, 'N':3}
+                VC_levels={"N": 0.7912,"L": 0.5034,"H": 0}
+                VI_levels={"N": 0.8191,"L": 0.4655,"H": 0}
+                VA_levels={"N": 0.7333,"L": 0.6045,"H": 0}
 
-            CR_levels={'H':0, 'M':1, 'L':2}
-            IR_levels={'H':0, 'M':1, 'L':2}
-            AR_levels={'H':0, 'M':1, 'L':2}
+                SC_levels={"N": 0.4271,"L": 0.331,"H": 0}
+                SI_levels={"N": 0.8717,"L": 0.764,"H": 0.3402,"S": 0}
+                SA_levels={"N": 1.0491,"L": 0.9599,"H": 0.5882,"S": 0}
 
-            step = 0.1
+
+                CR_levels={"L": 0.2321,"M": 0.1342,"H": 0}
+                IR_levels={"L": 0.3167,"M": 0.2511,"H": 0}
+                AR_levels={"L": 0.3166,"M": 0.1054,"H": 0}
+
+                E_levels={"U": 1.0622,"P": 0.6634,"A": 0}
+            }
+            else {
+                AV_levels={"N": 0.0, "A": 0.1, "L": 0.2, "P": 0.3}
+                PR_levels={"N": 0.0, "L": 0.1, "H": 0.2}
+                UI_levels={"N": 0.0, "P": 0.1, "A": 0.2}
+
+                AC_levels={'L':0.0, 'H':0.1}
+                AT_levels={'N':0.0, 'P':0.1}
+            
+                VC_levels={'H':0.0, 'L':0.1, 'N':0.2}
+                VI_levels={'H':0.0, 'L':0.1, 'N':0.2}
+                VA_levels={'H':0.0, 'L':0.1, 'N':0.2}    
+
+                SC_levels={'H':0.1, 'L':0.2, 'N':0.3}
+                SI_levels={'S':0.0, 'H':0.1, 'L':0.2, 'N':0.3}
+                SA_levels={'S':0.0, 'H':0.1, 'L':0.2, 'N':0.3}
+
+                CR_levels={'H':0.0, 'M':0.1, 'L':0.2}
+                IR_levels={'H':0.0, 'M':0.1, 'L':0.2}
+                AR_levels={'H':0.0, 'M':0.1, 'L':0.2}
+            }
+
             lookup = this.macroVector
             // Exception for no impact on system
             if(lookup.includes("33")) {
@@ -297,20 +325,17 @@ const app = Vue.createApp({
 
             eq1_maxes = this.getvalueEqLookup(lookup,0)
             eq2_maxes = this.getvalueEqLookup(lookup,1)
-            eq3_maxes = this.getvalueEqLookup(lookup,2)
+            eq3_eq6_maxes = this.getvalueEqLookup(lookup,2)[lookup[5]]
             eq4_maxes = this.getvalueEqLookup(lookup,3)
             eq5_maxes = this.getvalueEqLookup(lookup,4)
-            eq6_maxes = this.getvalueEqLookup(lookup,5)
 
             max_vectors = []
             for (eq1_max of eq1_maxes){
                 for (eq2_max of eq2_maxes){
-                    for (eq3_max of eq3_maxes){
+                    for (eq3_eq6_max of eq3_eq6_maxes){
                         for (eq4_max of eq4_maxes){
                             for (eq5max of eq5_maxes){
-                                for (eq6_max of eq6_maxes){
-                                    max_vectors.push(eq1_max+eq2_max+eq3_max+eq4_max+eq5max+eq6_max)
-                                }
+                                    max_vectors.push(eq1_max+eq2_max+eq3_eq6_max+eq4_max+eq5max)
                             }
                         }
                     }
@@ -374,8 +399,7 @@ const app = Vue.createApp({
             }
 
             sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
-
-            value = parseFloat(value) - parseFloat(step*sum_hamming_distance)
+            value = parseFloat(value) - parseFloat(sum_hamming_distance)
 
             // TODO: Do not use floats
             return value.toFixed(1)

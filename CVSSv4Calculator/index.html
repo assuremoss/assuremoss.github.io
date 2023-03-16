@@ -24,6 +24,8 @@
                     {{ vector }}
                 </mark>
                 <button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
+                <br>
+                <input type = "checkbox" id="weighted_checkbox" @click="onClick()"> Weighted Hamming Distance
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
                           :data-tooltip="showDetails ? 'Hide details' : 'Show details'"
