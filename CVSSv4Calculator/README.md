@@ -9,10 +9,17 @@ Acknowledgements to Ben Edwards (Cyenthia), Jonathan Spring (DHS), Peter Mell (N
 How it works:
 
 1. Read the vectors to be scored and fit it into a macro-vector
-2. Use a first lookup table for the ELO scores of the macrovectors (source Peter, Ben)
+   * this is basically the orginal code from RedHat
+2. Use a first lookup table for the ELO scores of the macrovectors 
+   * this is in the file cvss_lookup.js (source Peter, Ben)
 3. Use a second lookup table to find the highest severity vector(s) in the macrovectors
+   * this is in the file max_composed.js (Source Fabio, Giorgio)
+   * EQ3 and EQ6 are merged as they are not independent
 4. Compute the hamming distance from the highest severity vector and the vector to be scored
-5. The final score is elo(higheste severity vector of the macro vector) - hamming distance(highest severity vector in the macro vector,vector to be scored)
+   * The BaseScore function come in two variants 
+   * the vanilla version use 0.1 incements to compute the Hamming distance (Source Fabio)
+   * If you tick the box in the interface the Hamming distance is weighted by scores of an ELO algorithm (source Ben).
+5. The final score is 
+   * elo(higheste severity vector of the macro vector) - hamming distance(highest severity vector in the macro vector,vector to be scored)
 
-If you tick the box the hamming distance is not multiples of 0.1 but it is weighted by scores of an ELO algorithm on SIG scored vectors (source Ben).
 
