@@ -16,7 +16,7 @@ How it works:
 3. Use a second lookup table to find the highest severity vector(s) in the macrovectors
    * this is in the file max_composed.js (Source Fabio, Giorgio)
    * EQ3 and EQ6 are merged as they are not independent
-4. Compute the hamming distance from the highest severity vector and the vector to be scored
+4. Compute the hamming distance from the highest severity vector in the macrovector and the vector to be scored
    * The BaseScore function come in two variants 
    * the vanilla version use 0.1 incements to compute the Hamming distance (Source Fabio)
    * If you tick the box in the interface the Hamming distance is weighted by scores of an ELO algorithm (source Ben).
