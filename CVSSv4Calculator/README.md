@@ -12,6 +12,7 @@ How it works:
    * this is basically the orginal code from RedHat
 2. Use a first lookup table for the ELO scores of the macrovectors 
    * this is in the file cvss_lookup.js (source Peter, Ben)
+   * this has been adapted to make Base Score of the highest severity vector = 10.0
 3. Use a second lookup table to find the highest severity vector(s) in the macrovectors
    * this is in the file max_composed.js (Source Fabio, Giorgio)
    * EQ3 and EQ6 are merged as they are not independent
