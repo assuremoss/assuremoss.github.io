@@ -18,8 +18,8 @@ How it works:
    * EQ3 and EQ6 are merged as they are not independent
 4. Compute the hamming distance from the highest severity vector in the macrovector and the vector to be scored
    * The BaseScore function come in two variants 
-   * the vanilla version use 0.1 incements to compute the Hamming distance (Source Fabio)
-   * If you tick the box in the interface the Hamming distance is weighted by scores of an ELO algorithm (source Ben).
+   * the vanilla version use 0.1 increments to compute the Hamming distance (Source Fabio)
+   * If you tick the box in the interface the Hamming distance is weighted by scores of an ELO algorithm (data source Ben).
 5. The final score is 
    * elo(higheste severity vector of the macro vector) - hamming distance(highest severity vector in the macro vector,vector to be scored)
 
