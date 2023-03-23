@@ -408,6 +408,9 @@ const app = Vue.createApp({
             value = parseFloat(value) - parseFloat(sum_hamming_distance)
 
             // TODO: Do not use floats
+            if (value<0.0){
+                value = 0.0
+            }
             return value.toFixed(1)
         },
         qualScore() {
