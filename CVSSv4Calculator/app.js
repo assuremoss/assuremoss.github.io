@@ -94,15 +94,15 @@ const app = Vue.createApp({
             // The three security requirements metrics have X equivalent to M.
             // CR:X is the same as CR:M
             if(metric == "CR" && selected == "X") {
-                return "H"
+                return "M"
             }
             // IR:X is the same as IR:M
             if(metric == "IR" && selected == "X") {
-                return "H"
+                return "M"
             }
             // AR:X is the same as AR:M
             if(metric == "AR" && selected == "X") {
-                return "H"
+                return "M"
             }
 
             // All other environmental metrics just overwrite base score values,
