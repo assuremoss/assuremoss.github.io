@@ -32,7 +32,8 @@
                 <br>
                 <h5>Calculation: ELO(highest severity vector in the macro vector) - Hamming Distance(highest severity vector, to be scored vector)</h5>
                 <h6>Default Hamming Distance is multiplied by 0.1 - Tick checkbox for ELO Weighted Hamming Distance (Data by Ben Edwards)</h6>
-                <input type = "checkbox" id="weighted_checkbox" @click="onClick()"> Weighted Hamming Distance
+                <input type = "checkbox" id="weighted_checkbox" @click="onClick()"> Weighted Hamming Distance<br>
+                <input type = "checkbox" id="capped_checkbox" @click="onClickCapped()"> Capped
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
                           :data-tooltip="showDetails ? 'Hide details' : 'Show details'"

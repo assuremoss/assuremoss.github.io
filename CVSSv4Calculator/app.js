@@ -15,7 +15,8 @@ const app = Vue.createApp({
             showDetails: false,
             cvssSelected: null,
             header_height: 0,
-            isChecked: false
+            isChecked: false,
+            isCheckedCapped: false
         }
     },
     methods: {
@@ -23,6 +24,23 @@ const app = Vue.createApp({
             eq=parseInt(lookup[i])
             eq_val = maxComposed["eq"+String(i+1)][eq]
             return eq_val
+        },
+        getQualScore(score){
+            if(score == 0) {
+                return "None"
+            }
+            else if(score < 4.0) {
+                return "Low"
+            }
+            else if(score < 7.0) {
+                return "Medium"
+            }
+            else if(score < 9.0) {
+                return "High"
+            }
+            else {
+                return "Critical"
+            }
         },
         extractValueMetric(metric,str){
             //indexOf gives first index of the metric, we then need to go over its size
@@ -121,6 +139,9 @@ const app = Vue.createApp({
         },
         onClick() {
             this.isChecked = document.getElementById('weighted_checkbox').checked
+        },
+        onClickCapped() {
+            this.isCheckedCapped = document.getElementById('capped_checkbox').checked
         },
         resetSelected() {
             this.cvssSelected = {}
@@ -329,6 +350,8 @@ const app = Vue.createApp({
             }
             value = this.cvssLookupData[lookup]
 
+            qual_value_macrovector = this.getQualScore(value)
+
             eq1_maxes = this.getvalueEqLookup(lookup,0)
             eq2_maxes = this.getvalueEqLookup(lookup,1)
             eq3_eq6_maxes = this.getvalueEqLookup(lookup,2)[lookup[5]]
@@ -411,6 +434,27 @@ const app = Vue.createApp({
             if (value<0.0){
                 value = 0.0
             }
+
+            if(this.isCheckedCapped){
+                qual_value_vector = this.getQualScore(value)
+                if (qual_value_macrovector!=qual_value_vector){
+                    //cap to qualitative value macrovector score
+                    //only lower bound needed
+                    if(qual_value_macrovector=="Low"){
+                        value = 0.1
+                    }
+                    else if(qual_value_macrovector=="Medium"){
+                        value = 4.0
+                    }
+                    else if(qual_value_macrovector=="High"){
+                        value = 7.0
+                    }
+                    else if(qual_value_macrovector=="Critical"){
+                        value = 9.0
+                    }
+                }
+            }
+
             return value.toFixed(1)
         },
         qualScore() {
