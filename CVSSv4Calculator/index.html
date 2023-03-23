@@ -14,6 +14,7 @@
         <script src="cvss_details.js?v=1"></script>
         <script src="cvss_lookup.js?v=5"></script>
         <script src="max_composed.js"></script>
+        <script src="max_hamming.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre-exp.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre-icons.min.css">
@@ -32,8 +33,9 @@
                 <br>
                 <h5>Calculation: ELO(highest severity vector in the macro vector) - Hamming Distance(highest severity vector, to be scored vector)</h5>
                 <h6>Default Hamming Distance is multiplied by 0.1 - Tick checkbox for ELO Weighted Hamming Distance (Data by Ben Edwards)</h6>
-                <input type = "checkbox" id="weighted_checkbox" @click="onClick()"> Weighted Hamming Distance<br>
+                <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> Weighted Hamming Distance<br>
                 <input type = "checkbox" id="capped_checkbox" @click="onClickCapped()"> Capped
+                <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> Mean Hamming Distance
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
                           :data-tooltip="showDetails ? 'Hide details' : 'Show details'"
@@ -45,7 +47,10 @@
                     </span>
                 </h5>
                 <blockquote v-if="showDetails">
-                    <sup class="mb-2"><i>Macro vector: {{ macroVector }}</i></sup>
+                    <sup class="mb-2"><i>Macro vector: {{ macroVector }}</i></sup><br>
+                    <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
+                    {{ cvssMaxVector }}
+                    </mark>
                     <div v-for="(index, description) in cvssMacroVectorDetailsData">
                         {{ description }}: {{ cvssMacroVectorValuesData[macroVector[index]] }}
                     </div>
