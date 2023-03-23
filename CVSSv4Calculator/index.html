@@ -48,9 +48,12 @@
                 </h5>
                 <blockquote v-if="showDetails">
                     <sup class="mb-2"><i>Macro vector: {{ macroVector }}</i></sup><br>
+                    Highest Severity Vector: 
                     <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
                     {{ cvssMaxVector }}
                     </mark>
+                    <br>
+                    Hamming distance: {{ resulting_hamming_distance }}
                     <div v-for="(index, description) in cvssMacroVectorDetailsData">
                         {{ description }}: {{ cvssMacroVectorValuesData[macroVector[index]] }}
                     </div>

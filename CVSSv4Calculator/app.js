@@ -19,7 +19,8 @@ const app = Vue.createApp({
             isCheckedCapped: false,
             isCheckedWeighted: false,
             isCheckedMean: false,
-            cvssMaxVector: []
+            cvssMaxVector: [],
+            resulting_hamming_distance: null
         }
     },
     methods: {
@@ -412,6 +413,11 @@ const app = Vue.createApp({
                 hamming_distance_VI = VI_levels[this.m("VI")]-VI_levels[this.extractValueMetric("VI",tmp_vector)]
                 hamming_distance_VA = VA_levels[this.m("VA")]-VA_levels[this.extractValueMetric("VA",tmp_vector)]   
 
+                console.log(hamming_distance_VC)
+                console.log(hamming_distance_VI)
+                console.log(hamming_distance_VA)
+
+
                 if(this.m("MSI") == "S" && this.m("MSA")=="S"){
                     //use MSI and MSA
                     hamming_distance_SI = SI_levels[this.m("MSI")]-SI_levels[this.extractValueMetric("SI",tmp_vector)]             
@@ -436,7 +442,11 @@ const app = Vue.createApp({
 
                 hamming_distance_CR = CR_levels[this.m("CR")]-CR_levels[this.extractValueMetric("CR",tmp_vector)]
                 hamming_distance_IR = IR_levels[this.m("IR")]-IR_levels[this.extractValueMetric("IR",tmp_vector)]
-                hamming_distance_AR = AR_levels[this.m("AR")]-AR_levels[this.extractValueMetric("AR",tmp_vector)]   
+                hamming_distance_AR = AR_levels[this.m("AR")]-AR_levels[this.extractValueMetric("AR",tmp_vector)]
+
+                console.log(hamming_distance_CR)
+                console.log(hamming_distance_IR)
+                console.log(hamming_distance_AR)   
 
                 //if any is less than zero this is not the right max
                 if (hamming_distance_AV<0 || hamming_distance_PR<0 || hamming_distance_UI<0 || hamming_distance_AC<0 || hamming_distance_AT<0 || hamming_distance_VC<0 || hamming_distance_VI<0 || hamming_distance_VA<0 || hamming_distance_SC<0 || hamming_distance_SI<0 || hamming_distance_SA<0 || hamming_distance_CR<0 || hamming_distance_IR<0 || hamming_distance_AR<0) {
@@ -452,9 +462,11 @@ const app = Vue.createApp({
 
             if(!this.isCheckedMean){
                 sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
+                this.resulting_hamming_distance = sum_hamming_distance.toFixed(1)
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
             }
             else{
+                this.resulting_hamming_distance = null
                 step = 0.1
                 // mode 3: mean decrement among EQ sets
                 eq1_val = parseInt(lookup[0])
