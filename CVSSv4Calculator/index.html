@@ -26,11 +26,16 @@
             <div id="header">
                 <h4>CVSS v4.0 calculator – DRAFT</h4>
                 <h5> Look and feel from <A HREF="https://redhatproductsecurity.github.io/cvss-v4-calculator">Redhat</A>. Source code <A HREF="https://github.com/assuremoss/assuremoss.github.io/tree/main/CVSSv4Calculator">here</A> </h5>
-                <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
-                    {{ vector }}
-                </mark>
-                <button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
+                Current Vector,Score:
+                <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVectorCurrent">
+                    {{ vector }},{{ baseScore }}
+                </mark><button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
                 <br>
+                Highest Severity Vector,Score: 
+                <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVectorMax">
+                    CVSS:4.0/{{ cvssMaxVector }},{{ MaxBaseScore }}
+                </mark><br>
+                Macro vector: {{ macroVector }}<br>
                 <h5>
                 Modes
                 <h6>Default Mode 2: 0.1 * Hamming Distance</h6>
@@ -55,11 +60,6 @@
                     </span>
                 </h5>
                 <blockquote v-if="showDetails">
-                    <sup class="mb-2"><i>Macro vector: {{ macroVector }}</i></sup><br>
-                    Highest Severity Vector: 
-                    <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
-                    {{ cvssMaxVector }}
-                    </mark>
                     <div v-for="(index, description) in cvssMacroVectorDetailsData">
                         {{ description }}: {{ cvssMacroVectorValuesData[macroVector[index]] }}
                     </div>

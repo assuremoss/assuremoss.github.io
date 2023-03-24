@@ -22,6 +22,8 @@ const app = Vue.createApp({
             isCheckedMean: false,
             isCheckedMaxValue: false,
             cvssMaxVector: [],
+            max_base_value: 0.0,
+            current_value: 0.0
         }
     },
     methods: {
@@ -88,8 +90,12 @@ const app = Vue.createApp({
                 return "c-hand text-gray"
             }
         },
-        copyVector() {
-            navigator.clipboard.writeText(this.vector)
+        copyVectorCurrent() {
+            navigator.clipboard.writeText(this.vector+','+this.current_value)
+            window.location.hash = this.vector
+        },
+        copyVectorMax() {
+            navigator.clipboard.writeText(this.vector+','+this.max_base_value)
             window.location.hash = this.vector
         },
         onButton(metric, value) {
@@ -242,6 +248,15 @@ const app = Vue.createApp({
                 }
             }
             return value
+        },
+        MaxBaseScore(){
+            lookup = this.macroVector
+            // Exception for no impact on system
+            if(lookup.includes("33")) {
+                return "0.0"
+            }
+            this.max_base_value = this.cvssLookupData[lookup]
+            return this.max_base_value
         },
         macroVector() {
             // EQ1: 0-AV:N and PR:N and UI:N
@@ -419,6 +434,7 @@ const app = Vue.createApp({
             }
             value = this.cvssLookupData[lookup]
             if(this.isCheckedMaxValue){
+                this.current_value = value
                 return value
             }
 
@@ -692,7 +708,7 @@ const app = Vue.createApp({
                     }
                 }
             }
-
+            this.current_value = value.toFixed(1)
             return value.toFixed(1)
         },
         qualScore() {
