@@ -21,7 +21,7 @@ const app = Vue.createApp({
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMaxValue: false,
-            cvssMaxVector: [],
+            cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0
         }
@@ -147,6 +147,7 @@ const app = Vue.createApp({
         },
         onReset() {
             window.location.hash = ""
+            this.cvssMaxVector = null
         },
         onClickWeighted() {
             this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
