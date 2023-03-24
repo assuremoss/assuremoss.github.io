@@ -4,7 +4,7 @@ Forked from: https://github.com/RedHatProductSecurity/cvss-v4-calculator
 
 @Algorithm [Fabio Massacci](https://fabiomassacci.github.io/) (University of Trento and Vrije Universiteit Amsterdam), [Giorgio Di Tizio](https://giorgioditizio.github.io/) (University of Trento), 
      
-Acknowledgements to Ben Edwards (Cyenthia) Mode 5, Jonathan Spring (DHS), Peter Mell (NIST) ideation of mode 3
+Acknowledgements to Ben Edwards (Cyenthia) Mode 5, Jonathan Spring (DHS), Peter Mell (NIST) idea of mode 3
                    
 How it works:
 
