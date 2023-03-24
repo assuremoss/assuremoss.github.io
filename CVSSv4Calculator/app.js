@@ -21,6 +21,7 @@ const app = Vue.createApp({
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMaxValue: false,
+            isCheckedMinimal: true,
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0
@@ -158,6 +159,10 @@ const app = Vue.createApp({
 
                 this.isCheckedMaxValue = false
                 document.getElementById('max_checkbox').checked = false;
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
+   
             }
         },
         onClickMean() {
@@ -177,6 +182,31 @@ const app = Vue.createApp({
                 this.isCheckedCappedQualitative = false
                 document.getElementById('capped_qual_checkbox').checked = false;
 
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
+
+            }
+        },
+        onClickMinimal(){
+            this.isCheckedMinimal = document.getElementById('minimal_checkbox').checked
+
+            if (this.isCheckedMinimal){
+                //if true disable mean mode and checkbox
+                this.isCheckedWeighted = false
+                document.getElementById('weighted_checkbox').checked = false;
+
+                this.isCheckedMaxValue = false
+                document.getElementById('max_checkbox').checked = false;   
+
+                this.isCheckedMean = false
+                document.getElementById('mean_checkbox').checked = false;
+
+                this.isCheckedCappedMacro = false
+                document.getElementById('capped_macro_checkbox').checked = false;
+
+                this.isCheckedCappedQualitative = false
+                document.getElementById('capped_qual_checkbox').checked = false;
             }
         },
         onClickMaxValue(){
@@ -188,6 +218,10 @@ const app = Vue.createApp({
 
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
+
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
 
                 this.isCheckedCappedMacro = false
                 document.getElementById('capped_macro_checkbox').checked = false;
@@ -384,7 +418,7 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
-            if(this.isCheckedWeighted && !(this.isCheckedMean)){
+            if(this.isCheckedWeighted && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
                 AV_levels={"P": 2.0619,"L": 1.3112,"A": 0.5254,"N": 0}
                 PR_levels={"H": 0.4821,"L": 0.1504,"N": 0}
                 UI_levels={"A": 0.3296,"P": 0.194,"N": 0}
@@ -407,7 +441,7 @@ const app = Vue.createApp({
 
                 E_levels={"U": 1.0622,"P": 0.6634,"A": 0}
             }
-            else {
+            else if(this.isCheckedMinimal && !(this.isCheckedWeighted) && !(this.isCheckedMean)){
                 AV_levels={"N": 0.0, "A": 0.1, "L": 0.2, "P": 0.3}
                 PR_levels={"N": 0.0, "L": 0.1, "H": 0.2}
                 UI_levels={"N": 0.0, "P": 0.1, "A": 0.2}
@@ -560,6 +594,7 @@ const app = Vue.createApp({
             if(!this.isCheckedMean){
                 //setting capped to macrovector
                 if(this.isCheckedCappedMacro){
+                    console.log("ciao")
 
                     sum_hamming_distance = 0
                     //consider each eq and its lower macro
@@ -612,6 +647,7 @@ const app = Vue.createApp({
                     //not capped to macrovector, hamming distance is not constrained
                     sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
                 }
+                console.log(sum_hamming_distance)
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
             }
             else{
