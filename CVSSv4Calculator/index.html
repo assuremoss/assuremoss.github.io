@@ -8,7 +8,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
-        <title>CVSS v4.0 calculator – DRAFT (Max ELO Score - 0.1 *Hamming Distance)</title>
+        <title>CVSS v4.0 calculator</title>
         <script src="https://unpkg.com/vue@3.2.45/dist/vue.global.prod.js"></script>
         <script src="cvss_config.js?v=2"></script>
         <script src="cvss_details.js?v=1"></script>
@@ -38,16 +38,17 @@
                 Macro vector: {{ macroVector }}<br>
                 <h5>
                 Modes
-                <h6>Default Mode 2: 0.1 * Hamming Distance</h6>
                 <input type = "checkbox" id="max_checkbox" @click="onClickMaxValue()"> <b>Mode 0</b>: Raw Macro Vector<br>
-                <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> <b>Mode 3</b>: Mean Hamming Distance<br>
-                <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> <b>Mode 5</b>: Variable Hamming Distance (Data by Ben Edwards)<br>
+	        <h6>Default <b>Mode 3</b> Minimal Change (0.1 * Hamming Distance)</h6>
+                <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> <b>Mode 3</b>: Progress Towards Lower Macro Vector (Mean Proportional Hamming Distance)<br>
+                <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> <b>Mode 5</b>: Variable Change (Weighted Hamming Distance)<br>
+		<h6><b>Mode 6</b> forthcoming</h6>
                 </h5>
                 <h5>
-                Cap
+               The score above are "free" to change and go beyond the lower level. If you want the capped think your option.
                 <h6></h6>
-		        <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Capped Qualitative Score<br>
-                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Capped Macro Score<br>
+		        <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Max Change Bounded to Qualitative Score<br>
+                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Max Change Bounded to Macro Score<br>
                 </h5>
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
