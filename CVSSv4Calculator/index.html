@@ -31,11 +31,19 @@
                 </mark>
                 <button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
                 <br>
-                <h5>Calculation: ELO(highest severity vector in the macro vector) - Hamming Distance(highest severity vector, to be scored vector)</h5>
-                <h6>Default Hamming Distance is multiplied by 0.1 - Tick checkbox for ELO Weighted Hamming Distance (Data by Ben Edwards)</h6>
-                <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> Weighted Hamming Distance<br>
-		<input type = "checkbox" id="capped_checkbox" @click="onClickCapped()"> Capped<br>
-                <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> Mean Hamming Distance
+                <h5>
+                Modes
+                <h6>Default Mode 2: 0.1 * Hamming Distance</h6>
+                <input type = "checkbox" id="max_checkbox" @click="onClickMaxValue()"> <b>Mode 0</b>: Raw Macro Vector<br>
+                <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> <b>Mode 3</b>: Mean Hamming Distance<br>
+                <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> <b>Mode 5</b>: Variable Hamming Distance (Data by Ben Edwards)<br>
+                </h5>
+                <h5>
+                Cap
+                <h6></h6>
+		        <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Capped Qualitative Score<br>
+                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Capped Macro Score<br>
+                </h5>
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
                           :data-tooltip="showDetails ? 'Hide details' : 'Show details'"
@@ -52,8 +60,6 @@
                     <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVector">
                     {{ cvssMaxVector }}
                     </mark>
-                    <br>
-                    Hamming distance: {{ resulting_hamming_distance }}
                     <div v-for="(index, description) in cvssMacroVectorDetailsData">
                         {{ description }}: {{ cvssMacroVectorValuesData[macroVector[index]] }}
                     </div>
