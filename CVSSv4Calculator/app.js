@@ -418,6 +418,7 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
+            this.cvssMaxVector = null
             if(this.isCheckedWeighted && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
                 AV_levels={"P": 2.0619,"L": 1.3112,"A": 0.5254,"N": 0}
                 PR_levels={"H": 0.4821,"L": 0.1504,"N": 0}
