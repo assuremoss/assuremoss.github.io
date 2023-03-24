@@ -21,7 +21,6 @@ const app = Vue.createApp({
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMaxValue: false,
-            isCheckedMinimal: true,
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0
@@ -121,18 +120,18 @@ const app = Vue.createApp({
                 return "A"
             }
 
-            // The three security requirements metrics have X equivalent to M.
-            // CR:X is the same as CR:M
+            // The three security requirements metrics have X equivalent to H.
+            // CR:X is the same as CR:H
             if(metric == "CR" && selected == "X") {
-                return "M"
+                return "H"
             }
-            // IR:X is the same as IR:M
+            // IR:X is the same as IR:H
             if(metric == "IR" && selected == "X") {
-                return "M"
+                return "H"
             }
-            // AR:X is the same as AR:M
+            // AR:X is the same as AR:H
             if(metric == "AR" && selected == "X") {
-                return "M"
+                return "H"
             }
 
             // All other environmental metrics just overwrite base score values,
@@ -159,24 +158,6 @@ const app = Vue.createApp({
 
                 this.isCheckedMaxValue = false
                 document.getElementById('max_checkbox').checked = false;
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-
-            }
-        },
-        onClickMinimal() {
-            this.isCheckedMinimal = document.getElementById('minimal_checkbox').checked
-            if(this.isCheckedMinimal){
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedMaxValue = false
-                document.getElementById('max_checkbox').checked = false;
-
-
-                this.isCheckedWeighted = false
-                document.getElementById('weighted_checkbox').checked = false;
             }
         },
         onClickMean() {
@@ -196,9 +177,6 @@ const app = Vue.createApp({
                 this.isCheckedCappedQualitative = false
                 document.getElementById('capped_qual_checkbox').checked = false;
 
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-
             }
         },
         onClickMaxValue(){
@@ -210,9 +188,6 @@ const app = Vue.createApp({
 
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
 
                 this.isCheckedCappedMacro = false
                 document.getElementById('capped_macro_checkbox').checked = false;
@@ -494,7 +469,7 @@ const app = Vue.createApp({
             eq4_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val+1,eq5_val,eq6_val)
             eq5_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val+1,eq6_val)
 
-            //get their score, if the next lower macro score do not exist the result is Nan
+            //get their score, if the next lower macro score do not exist the result is NaN
             score_eq1_next_lower_macro = this.cvssLookupData[eq1_next_lower_macro]
             score_eq2_next_lower_macro = this.cvssLookupData[eq2_next_lower_macro]
             score_eq3eq6_next_lower_macro = this.cvssLookupData[eq3eq6_next_lower_macro]
@@ -607,7 +582,7 @@ const app = Vue.createApp({
                         sum_hamming_distance+=max_changes_eq1
                     }
                     else{
-                        //we fall here if either max_change is Nan or because space is enough
+                        //we fall here if either max_change is NaN or because space is enough
                         sum_hamming_distance+=current_hamming_distance_eq1
                     }
 
@@ -634,7 +609,7 @@ const app = Vue.createApp({
 
                 }
                 else{
-                    //no capped to macrovector, hamming distance is not constrained
+                    //not capped to macrovector, hamming distance is not constrained
                     sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
                 }
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
