@@ -460,6 +460,9 @@ const app = Vue.createApp({
                 CR_levels={'H':0.0, 'M':0.1, 'L':0.2}
                 IR_levels={'H':0.0, 'M':0.1, 'L':0.2}
                 AR_levels={'H':0.0, 'M':0.1, 'L':0.2}
+
+                E_levels={'U': 0.2, 'P': 0.1, 'A': 0}
+
             }
 
             lookup = this.macroVector
@@ -485,20 +488,31 @@ const app = Vue.createApp({
             //compute next lower macro, it can also not exist
             eq1_next_lower_macro = "".concat(eq1_val+1,eq2_val,eq3_val,eq4_val,eq5_val,eq6_val)
             eq2_next_lower_macro = "".concat(eq1_val,eq2_val+1,eq3_val,eq4_val,eq5_val,eq6_val)
+            
             //eq3 and eq6 are related
-            //sequence is 00 --> 01 --> 10 --> 11 --> 21 (20 is impossible)
-            if (eq6==0){
-                eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val,eq6_val+1)
+            if (eq3==1 && eq6==1){
+                //11 --> 21
+                eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val)
+            }
+            else if (eq3==0 && eq6==1){
+                //01 --> 11
+                eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val) 
+            }
+            else if (eq3==1 && eq6==0){
+                //10 --> 11
+                eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val,eq6_val+1) 
+            }
+            else if (eq3==0 && eq6==0){
+                //00 --> 01
+                //00 --> 10
+                eq3eq6_next_lower_macro_left = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val,eq6_val+1)
+                eq3eq6_next_lower_macro_right = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val)
             }
             else{
-                if (eq3!=1){
-                    eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val-1)
-                }
-                else{
-                    //this is needed due to lack of 20
-                    eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val)    
-                }
+                //21 --> 32 (do not exist)
+                eq3eq6_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val+1,eq4_val,eq5_val,eq6_val+1)
             }
+
 
             eq4_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val+1,eq5_val,eq6_val)
             eq5_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val+1,eq6_val)
@@ -506,7 +520,21 @@ const app = Vue.createApp({
             //get their score, if the next lower macro score do not exist the result is NaN
             score_eq1_next_lower_macro = this.cvssLookupData[eq1_next_lower_macro]
             score_eq2_next_lower_macro = this.cvssLookupData[eq2_next_lower_macro]
-            score_eq3eq6_next_lower_macro = this.cvssLookupData[eq3eq6_next_lower_macro]
+            if (eq3==0 && eq6==0){
+                //multiple path take the one with higher score
+                score_eq3eq6_next_lower_macro_left = this.cvssLookupData[eq3eq6_next_lower_macro_left]
+                score_eq3eq6_next_lower_macro_right = this.cvssLookupData[eq3eq6_next_lower_macro_right]
+
+                if (score_eq3eq6_next_lower_macro_left>score_eq3eq6_next_lower_macro_right){
+                    score_eq3eq6_next_lower_macro = score_eq3eq6_next_lower_macro_left
+                }
+                else{
+                    score_eq3eq6_next_lower_macro = score_eq3eq6_next_lower_macro_right
+                }
+            }
+            else{
+                score_eq3eq6_next_lower_macro = this.cvssLookupData[eq3eq6_next_lower_macro]
+            }
             score_eq4_next_lower_macro = this.cvssLookupData[eq4_next_lower_macro]
             score_eq5_next_lower_macro = this.cvssLookupData[eq5_next_lower_macro]
 
@@ -577,7 +605,7 @@ const app = Vue.createApp({
                 hamming_distance_CR = CR_levels[this.m("CR")]-CR_levels[this.extractValueMetric("CR",tmp_vector)]
                 hamming_distance_IR = IR_levels[this.m("IR")]-IR_levels[this.extractValueMetric("IR",tmp_vector)]
                 hamming_distance_AR = AR_levels[this.m("AR")]-AR_levels[this.extractValueMetric("AR",tmp_vector)]
- 
+
 
                 //if any is less than zero this is not the right max
                 if (hamming_distance_AV<0 || hamming_distance_PR<0 || hamming_distance_UI<0 || hamming_distance_AC<0 || hamming_distance_AT<0 || hamming_distance_VC<0 || hamming_distance_VI<0 || hamming_distance_VA<0 || hamming_distance_SC<0 || hamming_distance_SI<0 || hamming_distance_SA<0 || hamming_distance_CR<0 || hamming_distance_IR<0 || hamming_distance_AR<0) {
@@ -591,51 +619,51 @@ const app = Vue.createApp({
                 }
             }
 
+            //if the next lower macro score do not exist the result is Nan
+            available_distance_eq1 = value - score_eq1_next_lower_macro
+            available_distance_eq2 = value - score_eq2_next_lower_macro
+            available_distance_eq3eq6 = value - score_eq3eq6_next_lower_macro
+            available_distance_eq4 = value - score_eq4_next_lower_macro
+            available_distance_eq5 = value - score_eq5_next_lower_macro
+
+            current_hamming_distance_eq1 = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI
+            current_hamming_distance_eq2 = hamming_distance_AC + hamming_distance_AT
+            current_hamming_distance_eq3eq6 = hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
+            current_hamming_distance_eq4 = hamming_distance_SC + hamming_distance_SI + hamming_distance_SA
+
             if(!this.isCheckedMean){
                 //setting capped to macrovector
                 if(this.isCheckedCappedMacro){
 
                     sum_hamming_distance = 0
                     //consider each eq and its lower macro
-                    current_hamming_distance_eq1 = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI
-                    max_changes_eq1 = (value - score_eq1_next_lower_macro)
-
-                    current_hamming_distance_eq2 = hamming_distance_AC + hamming_distance_AT
-                    max_changes_eq2 = (value - score_eq2_next_lower_macro)
-
-                    current_hamming_distance_eq3eq6 = hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
-                    max_changes_eq3eq6 = (value - score_eq3eq6_next_lower_macro)
-
-                    current_hamming_distance_eq4 = hamming_distance_SC + hamming_distance_SI + hamming_distance_SA
-                    max_changes_eq4 = (value - score_eq4_next_lower_macro)
-
                     //no need for EQ5 as hamming is always 0
 
-                    if(current_hamming_distance_eq1>max_changes_eq1){
+                    if(current_hamming_distance_eq1>available_distance_eq1){
                         //cap to max changes
-                        sum_hamming_distance+=max_changes_eq1
+                        sum_hamming_distance+=available_distance_eq1
                     }
                     else{
                         //we fall here if either max_change is NaN or because space is enough
                         sum_hamming_distance+=current_hamming_distance_eq1
                     }
 
-                    if(current_hamming_distance_eq2>max_changes_eq2){
-                        sum_hamming_distance+=max_changes_eq2
+                    if(current_hamming_distance_eq2>available_distance_eq2){
+                        sum_hamming_distance+=available_distance_eq2
                     }
                     else{
                         sum_hamming_distance+=current_hamming_distance_eq2
                     }
 
-                    if(current_hamming_distance_eq3eq6>max_changes_eq3eq6){
-                        sum_hamming_distance+=max_changes_eq3eq6
+                    if(current_hamming_distance_eq3eq6>available_distance_eq3eq6){
+                        sum_hamming_distance+=available_distance_eq3eq6
                     }
                     else{
                         sum_hamming_distance+=current_hamming_distance_eq3eq6
                     }
 
-                    if(current_hamming_distance_eq4>max_changes_eq4){
-                        sum_hamming_distance+=max_changes_eq4
+                    if(current_hamming_distance_eq4>available_distance_eq4){
+                        sum_hamming_distance+=available_distance_eq4
                     }
                     else{
                         sum_hamming_distance+=current_hamming_distance_eq4
@@ -646,7 +674,6 @@ const app = Vue.createApp({
                     //not capped to macrovector, hamming distance is not constrained
                     sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
                 }
-                console.log(sum_hamming_distance)
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
             }
             else{
@@ -656,25 +683,15 @@ const app = Vue.createApp({
                 //some of them do not exist, we will find them by retrieving the score. If score null then do not exist
                 n_existing_lower = 0
 
-                //if the next lower macro score do not exist the result is Nan
-                //decrement of one step is to avoid the case where we have that the vector is exactly all lower thus making the score of the higher macrovector = score of the lower
-                available_distance_eq1 = value - score_eq1_next_lower_macro
-                available_distance_eq2 = value - score_eq2_next_lower_macro
-                available_distance_eq3eq6 = value - score_eq3eq6_next_lower_macro
-                available_distance_eq4 = value - score_eq4_next_lower_macro
-                available_distance_eq5 = value - score_eq5_next_lower_macro
-
                 normalized_hamming_eq1 = 0
                 normalized_hamming_eq2 = 0
                 normalized_hamming_eq3eq6 = 0
                 normalized_hamming_eq4 = 0
                 normalized_hamming_eq5 = 0
 
-                
-
                 if (!isNaN(available_distance_eq1)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq1_hamming = (hamming_distance_AV + hamming_distance_PR + hamming_distance_UI)/(this.maxHammingData['eq1'][String(eq1_val)]*step)
+                    percent_to_next_eq1_hamming = (current_hamming_distance_eq1)/(this.maxHammingData['eq1'][String(eq1_val)]*step)
                     //can be nan if divided by zero
                     if(isNaN(percent_to_next_eq1_hamming)){
                         percent_to_next_eq1_hamming=0
@@ -684,7 +701,7 @@ const app = Vue.createApp({
 
                 if (!isNaN(available_distance_eq2)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq2_hamming = (hamming_distance_AC + hamming_distance_AT)/(this.maxHammingData['eq2'][String(eq2_val)]*step)
+                    percent_to_next_eq2_hamming = (current_hamming_distance_eq2)/(this.maxHammingData['eq2'][String(eq2_val)]*step)
                     if(isNaN(percent_to_next_eq2_hamming)){
                         percent_to_next_eq2_hamming=0
                     }
@@ -693,7 +710,7 @@ const app = Vue.createApp({
 
                 if (!isNaN(available_distance_eq3eq6)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq3eq6_hamming = (hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR)/(this.maxHammingData['eq3'][String(eq3_val)][String(eq6_val)]*step)
+                    percent_to_next_eq3eq6_hamming = (current_hamming_distance_eq3eq6)/(this.maxHammingData['eq3'][String(eq3_val)][String(eq6_val)]*step)
                     if(isNaN(percent_to_next_eq3eq6_hamming)){
                         percent_to_next_eq3eq6_hamming=0
                     }
@@ -702,7 +719,7 @@ const app = Vue.createApp({
 
                 if (!isNaN(available_distance_eq4)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq4_hamming = (hamming_distance_SC + hamming_distance_SI + hamming_distance_SA)/(this.maxHammingData['eq4'][String(eq4_val)]*step)
+                    percent_to_next_eq4_hamming = (current_hamming_distance_eq4)/(this.maxHammingData['eq4'][String(eq4_val)]*step)
                     if(isNaN(percent_to_next_eq4_hamming)){
                         percent_to_next_eq4_hamming=0
                     }
