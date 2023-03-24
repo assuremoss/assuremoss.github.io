@@ -21,6 +21,7 @@ const app = Vue.createApp({
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMaxValue: false,
+            isCheckedMinimal: true,
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0
@@ -158,6 +159,24 @@ const app = Vue.createApp({
 
                 this.isCheckedMaxValue = false
                 document.getElementById('max_checkbox').checked = false;
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
+
+            }
+        },
+        onClickMinimal() {
+            this.isCheckedMinimal = document.getElementById('minimal_checkbox').checked
+            if(this.isCheckedMinimal){
+                this.isCheckedMean = false
+                document.getElementById('mean_checkbox').checked = false;
+
+                this.isCheckedMaxValue = false
+                document.getElementById('max_checkbox').checked = false;
+
+
+                this.isCheckedWeighted = false
+                document.getElementById('weighted_checkbox').checked = false;
             }
         },
         onClickMean() {
@@ -177,6 +196,9 @@ const app = Vue.createApp({
                 this.isCheckedCappedQualitative = false
                 document.getElementById('capped_qual_checkbox').checked = false;
 
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
+
             }
         },
         onClickMaxValue(){
@@ -188,6 +210,9 @@ const app = Vue.createApp({
 
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
 
                 this.isCheckedCappedMacro = false
                 document.getElementById('capped_macro_checkbox').checked = false;
