@@ -594,7 +594,6 @@ const app = Vue.createApp({
             if(!this.isCheckedMean){
                 //setting capped to macrovector
                 if(this.isCheckedCappedMacro){
-                    console.log("ciao")
 
                     sum_hamming_distance = 0
                     //consider each eq and its lower macro
