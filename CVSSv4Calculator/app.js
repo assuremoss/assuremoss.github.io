@@ -442,7 +442,7 @@ const app = Vue.createApp({
 
                 E_levels={"U": 1.0622,"P": 0.6634,"A": 0}
             }
-            else if(this.isCheckedMinimal && !(this.isCheckedWeighted) && !(this.isCheckedMean)){
+            else if(this.isCheckedMinimal || this.isCheckedMean){
                 AV_levels={"N": 0.0, "A": 0.1, "L": 0.2, "P": 0.3}
                 PR_levels={"N": 0.0, "L": 0.1, "H": 0.2}
                 UI_levels={"N": 0.0, "P": 0.1, "A": 0.2}
