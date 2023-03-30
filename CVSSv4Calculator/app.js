@@ -11,6 +11,7 @@ const app = Vue.createApp({
             cvssLookupData: cvssLookup,
             maxComposedData: maxComposed,
             maxHammingData: maxHamming,
+            maxHammingVariableData: maxHammingVariable,
             cvssMacroVectorDetailsData: cvssMacroVectorDetails,
             cvssMacroVectorValuesData: cvssMacroVectorValues,
             showDetails: false,
@@ -20,6 +21,7 @@ const app = Vue.createApp({
             isCheckedCappedMacro: false,
             isCheckedWeighted: false,
             isCheckedMean: false,
+            isCheckedMeanVariable: false,
             isCheckedMaxValue: false,
             isCheckedMinimal: true,
             cvssMaxVector: null,
@@ -154,6 +156,9 @@ const app = Vue.createApp({
             this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
             if (this.isCheckedWeighted){
                 //if true disable mean mode and checkbox
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
 
@@ -165,10 +170,37 @@ const app = Vue.createApp({
    
             }
         },
+        onClickMeanVariable() {
+            this.isCheckedMeanVariable = document.getElementById('mean_variable_checkbox').checked
+            if (this.isCheckedMeanVariable){
+                //if true disable mean mode and checkbox
+                this.isCheckedMean = false
+                document.getElementById('mean_checkbox').checked = false;
+
+                this.isCheckedWeighted = false
+                document.getElementById('weighted_checkbox').checked = false;
+
+                this.isCheckedMaxValue = false
+                document.getElementById('max_checkbox').checked = false;
+
+                this.isCheckedCappedMacro = false
+                document.getElementById('capped_macro_checkbox').checked = false;
+
+                this.isCheckedCappedQualitative = false
+                document.getElementById('capped_qual_checkbox').checked = false;
+
+                this.isCheckedMinimal = false
+                document.getElementById('minimal_checkbox').checked = false;
+
+            }
+        },
         onClickMean() {
             this.isCheckedMean = document.getElementById('mean_checkbox').checked
             if (this.isCheckedMean){
                 //if true disable mean mode and checkbox
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedWeighted = false
                 document.getElementById('weighted_checkbox').checked = false;
 
@@ -193,6 +225,10 @@ const app = Vue.createApp({
 
             if (this.isCheckedMinimal){
                 //if true disable mean mode and checkbox
+
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedWeighted = false
                 document.getElementById('weighted_checkbox').checked = false;
 
@@ -213,6 +249,9 @@ const app = Vue.createApp({
             this.isCheckedMaxValue = document.getElementById('max_checkbox').checked
             if (this.isCheckedMaxValue){
                 //disable other
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedWeighted = false
                 document.getElementById('weighted_checkbox').checked = false;
 
@@ -235,6 +274,9 @@ const app = Vue.createApp({
             this.isCheckedCappedQualitative = document.getElementById('capped_qual_checkbox').checked
             if (this.isCheckedCappedQualitative){
                 //if true disable mean mode and checkbox
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
 
@@ -246,6 +288,9 @@ const app = Vue.createApp({
             this.isCheckedCappedMacro = document.getElementById('capped_macro_checkbox').checked
             if (this.isCheckedCappedMacro){
                 //if true disable mean mode and checkbox
+                this.isCheckedMeanVariable = false
+                document.getElementById('mean_variable_checkbox').checked = false;
+
                 this.isCheckedMean = false
                 document.getElementById('mean_checkbox').checked = false;
 
@@ -419,7 +464,8 @@ const app = Vue.createApp({
         },
         baseScore() {
             this.cvssMaxVector = null
-            if(this.isCheckedWeighted && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
+            if((this.isCheckedWeighted || this.isCheckedMeanVariable) && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
+                //console.log("Variable values")
                 AV_levels={"P": 2.0619,"L": 1.3112,"A": 0.5254,"N": 0}
                 PR_levels={"H": 0.4821,"L": 0.1504,"N": 0}
                 UI_levels={"A": 0.3296,"P": 0.194,"N": 0}
@@ -619,6 +665,7 @@ const app = Vue.createApp({
                     break
                 }
             }
+            //console.log(max_vector)
 
             //if the next lower macro score do not exist the result is Nan
             available_distance_eq1 = value - score_eq1_next_lower_macro
@@ -632,7 +679,7 @@ const app = Vue.createApp({
             current_hamming_distance_eq3eq6 = hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
             current_hamming_distance_eq4 = hamming_distance_SC + hamming_distance_SI + hamming_distance_SA
 
-            if(!this.isCheckedMean){
+            if(!this.isCheckedMean && !this.isCheckedMeanVariable){
                 //setting capped to macrovector
                 if(this.isCheckedCappedMacro){
 
@@ -678,6 +725,7 @@ const app = Vue.createApp({
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
             }
             else{
+                //console.log("MEAN SECTION")
                 step = 0.1
                 // mode 3: mean decrement among EQ sets
 
@@ -690,40 +738,77 @@ const app = Vue.createApp({
                 normalized_hamming_eq4 = 0
                 normalized_hamming_eq5 = 0
 
+                if(this.isCheckedMeanVariable){
+                    //console.log("Variable MEAN")
+                    //adjust size to avoid 100% coverage using available distance
+                    if(available_distance_eq1>0.1){
+                        available_distance_eq1 = available_distance_eq1 - step
+                    }
+                    if(available_distance_eq2>0.1){
+                        available_distance_eq2 = available_distance_eq2 - step
+                    }
+                    if(available_distance_eq3eq6>0.1){
+                        available_distance_eq3eq6 = available_distance_eq3eq6 - step
+
+                    }
+                    if(available_distance_eq4>0.1){
+                        available_distance_eq4 = available_distance_eq4 - step
+                    }
+
+                    maxHamming_eq1 = this.maxHammingVariableData['eq1'][String(eq1_val)]
+                    maxHamming_eq2 = this.maxHammingVariableData['eq2'][String(eq2_val)]
+                    maxHamming_eq3eq6 = this.maxHammingVariableData['eq3'][String(eq3_val)][String(eq6_val)]
+                    maxHamming_eq4 = this.maxHammingVariableData['eq4'][String(eq4_val)]
+                }
+                else{
+                    //here adjustment is not neeeded as the hamming distance already include the space
+                    //case 0.1 step, multiply by step because distance is pure
+                    maxHamming_eq1 = this.maxHammingData['eq1'][String(eq1_val)]*step
+                    maxHamming_eq2 = this.maxHammingData['eq2'][String(eq2_val)]*step
+                    maxHamming_eq3eq6 = this.maxHammingData['eq3'][String(eq3_val)][String(eq6_val)]*step
+                    maxHamming_eq4 = this.maxHammingData['eq4'][String(eq4_val)]*step
+                }
+
                 if (!isNaN(available_distance_eq1)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq1_hamming = (current_hamming_distance_eq1)/(this.maxHammingData['eq1'][String(eq1_val)]*step)
+                    percent_to_next_eq1_hamming = (current_hamming_distance_eq1)/maxHamming_eq1
                     //can be nan if divided by zero
                     if(isNaN(percent_to_next_eq1_hamming)){
                         percent_to_next_eq1_hamming=0
                     }
+                    //console.log("EQ1"+percent_to_next_eq1_hamming)
                     normalized_hamming_eq1 = available_distance_eq1*percent_to_next_eq1_hamming
+                    //console.log(available_distance_eq1)
+                    //console.log(normalized_hamming_eq1)
                 }
 
                 if (!isNaN(available_distance_eq2)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq2_hamming = (current_hamming_distance_eq2)/(this.maxHammingData['eq2'][String(eq2_val)]*step)
+                    percent_to_next_eq2_hamming = (current_hamming_distance_eq2)/maxHamming_eq2
                     if(isNaN(percent_to_next_eq2_hamming)){
                         percent_to_next_eq2_hamming=0
                     }
+                    //console.log("EQ2"+percent_to_next_eq2_hamming)
                     normalized_hamming_eq2 = available_distance_eq2*percent_to_next_eq2_hamming
                 }
 
                 if (!isNaN(available_distance_eq3eq6)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq3eq6_hamming = (current_hamming_distance_eq3eq6)/(this.maxHammingData['eq3'][String(eq3_val)][String(eq6_val)]*step)
+                    percent_to_next_eq3eq6_hamming = (current_hamming_distance_eq3eq6)/maxHamming_eq3eq6
                     if(isNaN(percent_to_next_eq3eq6_hamming)){
                         percent_to_next_eq3eq6_hamming=0
                     }
+                    //console.log("EQ3"+percent_to_next_eq3eq6_hamming)
                     normalized_hamming_eq3eq6 = available_distance_eq3eq6*percent_to_next_eq3eq6_hamming
                 }
 
                 if (!isNaN(available_distance_eq4)){
                     n_existing_lower=n_existing_lower+1
-                    percent_to_next_eq4_hamming = (current_hamming_distance_eq4)/(this.maxHammingData['eq4'][String(eq4_val)]*step)
+                    percent_to_next_eq4_hamming = (current_hamming_distance_eq4)/maxHamming_eq4
                     if(isNaN(percent_to_next_eq4_hamming)){
                         percent_to_next_eq4_hamming=0
                     }
+                    //console.log("EQ4"+percent_to_next_eq4_hamming)
                     normalized_hamming_eq4 = available_distance_eq4*percent_to_next_eq4_hamming
                 }
 
@@ -733,8 +818,11 @@ const app = Vue.createApp({
                     percent_to_next_eq5_hamming = 0
                     normalized_hamming_eq5 = available_distance_eq5*percent_to_next_eq5_hamming
                 }
+                //console.log("#############")
 
                 mean_distance = (normalized_hamming_eq1+normalized_hamming_eq2+normalized_hamming_eq3eq6+normalized_hamming_eq4+normalized_hamming_eq5)/n_existing_lower
+                //console.log(n_existing_lower)
+                //console.log(mean_distance)
                 value = parseFloat(value) - parseFloat(mean_distance)
                 
             }
@@ -793,7 +881,7 @@ const app = Vue.createApp({
         })
 
         const resizeObserver = new ResizeObserver(() => {
-            console.log("Size changed")
+            //console.log("Size changed")
             this.header_height = document.getElementById('header').clientHeight
         })
 
