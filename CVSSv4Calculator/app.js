@@ -9,6 +9,7 @@ const app = Vue.createApp({
         return {
             cvssConfigData: cvssConfig,
             cvssLookupData: cvssLookup,
+            cvssLookupDataAdjusted: cvssLookup_adjusted,
             maxComposedData: maxComposed,
             maxHammingData: maxHamming,
             maxHammingVariableData: maxHammingVariable,
@@ -26,7 +27,8 @@ const app = Vue.createApp({
             isCheckedMinimal: true,
             cvssMaxVector: null,
             max_base_value: 0.0,
-            current_value: 0.0
+            current_value: 0.0,
+            isLookupAdjusted: false
         }
     },
     methods: {
@@ -151,6 +153,9 @@ const app = Vue.createApp({
         onReset() {
             window.location.hash = ""
             this.cvssMaxVector = null
+        },
+        onClickAdjusted() {
+            this.isLookupAdjusted = document.getElementById('adjusted_checkbox').checked
         },
         onClickWeighted() {
             this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
@@ -335,7 +340,13 @@ const app = Vue.createApp({
             if(lookup.includes("33")) {
                 return "0.0"
             }
-            this.max_base_value = this.cvssLookupData[lookup]
+
+            if(this.isLookupAdjusted){
+                this.max_base_value = this.cvssLookupDataAdjusted[lookup]
+            }
+            else{
+                this.max_base_value = this.cvssLookupData[lookup]
+            }
             return this.max_base_value
         },
         macroVector() {
@@ -463,6 +474,14 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
+            //define lookup table
+            if(this.isLookupAdjusted){
+                lookuptable = this.cvssLookupDataAdjusted
+            }
+            else{
+                lookuptable = this.cvssLookupData
+            }
+
             this.cvssMaxVector = null
             if((this.isCheckedWeighted || this.isCheckedMeanVariable) && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
                 //console.log("Variable values")
@@ -517,7 +536,7 @@ const app = Vue.createApp({
             if(lookup.includes("33")) {
                 return "0.0"
             }
-            value = this.cvssLookupData[lookup]
+            value = lookuptable[lookup]
             if(this.isCheckedMaxValue){
                 this.current_value = value
                 return value
@@ -565,12 +584,12 @@ const app = Vue.createApp({
             eq5_next_lower_macro = "".concat(eq1_val,eq2_val,eq3_val,eq4_val,eq5_val+1,eq6_val)
 
             //get their score, if the next lower macro score do not exist the result is NaN
-            score_eq1_next_lower_macro = this.cvssLookupData[eq1_next_lower_macro]
-            score_eq2_next_lower_macro = this.cvssLookupData[eq2_next_lower_macro]
+            score_eq1_next_lower_macro = lookuptable[eq1_next_lower_macro]
+            score_eq2_next_lower_macro = lookuptable[eq2_next_lower_macro]
             if (eq3==0 && eq6==0){
                 //multiple path take the one with higher score
-                score_eq3eq6_next_lower_macro_left = this.cvssLookupData[eq3eq6_next_lower_macro_left]
-                score_eq3eq6_next_lower_macro_right = this.cvssLookupData[eq3eq6_next_lower_macro_right]
+                score_eq3eq6_next_lower_macro_left = lookuptable[eq3eq6_next_lower_macro_left]
+                score_eq3eq6_next_lower_macro_right = lookuptable[eq3eq6_next_lower_macro_right]
 
                 if (score_eq3eq6_next_lower_macro_left>score_eq3eq6_next_lower_macro_right){
                     score_eq3eq6_next_lower_macro = score_eq3eq6_next_lower_macro_left
@@ -580,10 +599,10 @@ const app = Vue.createApp({
                 }
             }
             else{
-                score_eq3eq6_next_lower_macro = this.cvssLookupData[eq3eq6_next_lower_macro]
+                score_eq3eq6_next_lower_macro = lookuptable[eq3eq6_next_lower_macro]
             }
-            score_eq4_next_lower_macro = this.cvssLookupData[eq4_next_lower_macro]
-            score_eq5_next_lower_macro = this.cvssLookupData[eq5_next_lower_macro]
+            score_eq4_next_lower_macro = lookuptable[eq4_next_lower_macro]
+            score_eq5_next_lower_macro = lookuptable[eq5_next_lower_macro]
 
             //get all max vector for the eq
             eq1_maxes = this.getvalueEqLookup(lookup,0)
