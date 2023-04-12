@@ -53,6 +53,14 @@
                 <input type = "checkbox" id="adjusted_checkbox" @click="onClickAdjusted()"> Adjusted Elo Score: reduced outliers between EQ3 and EQ4 (XSS fix)<br>
                 </h5>
                 <h5>
+                    Adjust the macrovectors up or down.
+                </h5>
+                <h6>
+                    Macrovectors can be adjusted from the minimal vector upwards (increasing the score) or down from the maximal vector within an equivalence class value. As an alternative they can also be adjusted from the middle out.</h6>
+                     <input type = "checkbox" id="adjust_up" @click="onClickAdjustUp()" checked=true>Up<br>
+                     <input type = "checkbox" id="adjust_middle" @click="onClickAdjustMiddle()">Middle<br>
+                     <input type = "checkbox" id="adjust_down" @click="onClickAdjustDown()" >Down<br>
+                <h5>
                The scores above are "free" to change and to go beyond the lower levels. If you want them capped tick your preferred option.
                 <h6></h6>
 		        <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Max Change Bounded to Qualitative Score<br>
