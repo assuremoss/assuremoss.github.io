@@ -424,13 +424,6 @@ const app = Vue.createApp({
                 return "0.0"
             }
             this.max_base_value = this.lookupMap[this.currentLookup][lookup]
-
-            //if(this.isLookupAdjusted){
-            //    this.max_base_value = this.cvssLookupDataAdjusted[lookup]
-           // }
-            //else{
-            //    this.max_base_value = this.cvssLookupData[lookup]
-            //}
             return this.max_base_value
         },
         macroVector() {
@@ -559,12 +552,6 @@ const app = Vue.createApp({
         },
         baseScore() {
             //define lookup table
-            if(this.isLookupAdjusted){
-                lookuptable = this.cvssLookupDataAdjusted
-            }
-            else{
-                lookuptable = this.cvssLookupData
-            }
             lookuptable = this.lookupMap[this.currentLookup];
 
             this.cvssMaxVector = null
