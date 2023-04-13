@@ -37,44 +37,56 @@
                 </mark><br>
                 Macro vector: {{ macroVector }}<br>
                 <h5>
-                Modes
+                    Base Macro vector score scaling to use
+                    </h5>
+                    <h6>
+                        <select id="dataset_select" @change="onChangeDataSelect()">
+                            <option value="linear">Linear Rescaling</option>
+                            <option value="linear_clust">Linear Clustering</option>
+                            <option value="base">Qualitative Splits with Binned Ranking: "Original" Elo scores</option>
+                            <option value="adjusted" selected>Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)</option>
+                        </select>
+                    </h6>
+                <h5>
+                Macrovector Adjustment Mode
                 <h6>
+                    <select id="mode_select" @change="onChangeModeSelect()">
+                        <option value="max"> <b>Mode 0</b>: Raw Elo Score of Macro Vector</option>
+                        <option value="minimal" selected><b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)</option>
+                        <option value="mean"><b>Mode 3</b>: Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Hamming Distance)</option>
+                        <option value="weighted"><b>Mode 5</b>: Variable Change (Weighted Hamming Distance)</option>
+                        <option value="mean_variable"><b>Mode 6</b>: Variable Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Weighted Hamming Distance)</option>
+                    </select><br>
+                    <!--
                 <input type = "checkbox" id="max_checkbox" @click="onClickMaxValue()"> <b>Mode 0</b>: Raw Elo Score of Macro Vector<br>
-	           <input type = "checkbox" id="minimal_checkbox" @click="onClickMinimal()" checked=true> <b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)<br>
+	            <input type = "checkbox" id="minimal_checkbox" @click="onClickMinimal()" checked=true> <b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)<br>
                 <input type = "checkbox" id="mean_checkbox" @click="onClickMean()"> <b>Mode 3</b>: Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Hamming Distance)<br>
                 <input type = "checkbox" id="weighted_checkbox" @click="onClickWeighted()"> <b>Mode 5</b>: Variable Change (Weighted Hamming Distance)<br>
                 <input type = "checkbox" id="mean_variable_checkbox" @click="onClickMeanVariable()"> <b>Mode 6</b>: Variable Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Weighted Hamming Distance)<br>
-                </h6>
-		<h6><b>Mode 4</b> forthcoming</h6>
+                </h6>-->
+		<!-- <h6><b>Mode 4</b> forthcoming</h6> -->
                 </h5>
                 <h5>
-                Base Macro vector score scaling to use
-                </h5>
-                <h6>
-                    <input type = "checkbox" id="linear_checkbox" @click="onClickLinear()">Linear Rescaling<br>
-                </h6>
-                <h6>
-                    <input type = "checkbox" id="linear_clust_checkbox" @click="onClickLinearClust()">Linear Clustering<br>
-                </h6>
-                <h6>
-                    <input type = "checkbox" id="qual_rank_bin_checkbox" @click="onClickQualRankBin()">Qualitative Splits with Binned Ranking: "Original" Elo scores<br>
-                </h6>
-                <h6>
-                    <input type = "checkbox" id="adjusted_checkbox" @click="onClickAdjusted()" checked=true> Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)<br>
-                </h6>
-                <h5>
-                    Adjust the macrovectors up or down.
+                    Macrovector adjustment direction
                 </h5>
                 <h6>
                     Macrovectors can be adjusted from the minimal vector upwards (increasing the score) or down from the maximal vector within an equivalence class value. As an alternative they can also be adjusted from the middle out.</h6>
-                     <input type = "checkbox" id="adjust_up" @click="onClickAdjustUp()" checked=true>Up<br>
-                     <input type = "checkbox" id="adjust_middle" @click="onClickAdjustMiddle()">Middle<br>
-                     <input type = "checkbox" id="adjust_down" @click="onClickAdjustDown()" >Down<br>
+                    <select id="adjustment_mode_select" @change="onAdjustmentSelect()">
+                        <option value="up">Up</option>
+                        <option value="middle">Middle Out</option>
+                        <option value="down" selected>Down</option>
+                    </select> 
                 <h5>
-               The scores above are "free" to change and to go beyond the lower levels. If you want them capped tick your preferred option.
-                <h6></h6>
-		        <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Max Change Bounded to Qualitative Score<br>
-                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Max Change Bounded to MacroVector<br>
+                    Capping
+                <h6>The scores above are "free" to change and to go beyond the lower levels. If you want them capped tick your preferred option.
+                    <select id="capping_select" @change="onCappingChange()">
+                        <option value="none" selected>None</option>
+                        <option value="qual">Max Change Bounded to Qualitative Score</option>
+                        <option value="macro">Max Change Bounded to MacroVector</option>
+                    </select>
+                </h6>
+		        <!-- <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Max Change Bounded to Qualitative Score<br>
+                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Max Change Bounded to MacroVector<br>-->
                 </h5>
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"

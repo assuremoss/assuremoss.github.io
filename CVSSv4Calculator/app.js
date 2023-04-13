@@ -8,7 +8,6 @@ const app = Vue.createApp({
     data() {
         return {
             cvssConfigData: cvssConfig,
-            cvssLookupData: cvssLookup,
             maxComposedData: maxComposed,
             maxHammingData: maxHamming,
             maxHammingVariableData: maxHammingVariable,
@@ -17,16 +16,19 @@ const app = Vue.createApp({
             showDetails: false,
             cvssSelected: null,
             header_height: 0,
+            current_cap: "none",
             isCheckedCappedQualitative: false,
             isCheckedCappedMacro: false,
+            current_mode: "minimal",// For later to get rid of the booleans
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMeanVariable: false,
             isCheckedMaxValue: false,
             isCheckedMinimal: true,
-            isClickAdjustDown: false,
+            isClickAdjustDown: true,
             isClickAdjustMiddle: false,
-            isClickAdjustUp: true,
+            isClickAdjustUp: false,
+            current_adjust: "down", // For later to get rid of booleans
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0,
@@ -157,7 +159,59 @@ const app = Vue.createApp({
             window.location.hash = ""
             this.cvssMaxVector = null
         },
+        onChangeModeSelect() {
+            this.current_mode = document.getElementById("mode_select").value;
+            if (this.current_mode == 'weighted') {
+                this.isCheckedWeighted = true;
+                this.isCheckedMean = false;
+                this.isCheckedMeanVariable = false;
+                this.isCheckedMaxValue = false;
+                this.isCheckedMinimal = false;
+            } else if (this.current_mode == 'mean') {
+                console.log("Cap doesn't make sense here")
+                document.getElementById("capping_select").value='none';
+                this.current_cap = 'none';
+                this.isCheckedCappedMacro = false
+                this.isCheckedCappedQualitative = false
 
+                this.isCheckedWeighted = false;
+                this.isCheckedMean = true;
+                this.isCheckedMeanVariable = false;
+                this.isCheckedMaxValue = false;
+                this.isCheckedMinimal = false;
+            } else if (this.current_mode=='mean_variable'){
+                console.log("Cap doesn't make sense here")
+                document.getElementById("capping_select").value='none';
+                this.current_cap = 'none';
+                this.isCheckedCappedMacro = false
+                this.isCheckedCappedQualitative = false
+
+                this.isCheckedWeighted = false;
+                this.isCheckedMean = false;
+                this.isCheckedMeanVariable = true;
+                this.isCheckedMaxValue = false;
+                this.isCheckedMinimal = false;
+            } else if (this.current_mode=='max') {
+                console.log("Cap doesn't make sense here")
+                document.getElementById("capping_select").value='none';
+                this.current_cap = 'none';
+                this.isCheckedCappedMacro = false
+                this.isCheckedCappedQualitative = false
+
+                this.isCheckedWeighted = false;
+                this.isCheckedMean = false;
+                this.isCheckedMeanVariable = false;
+                this.isCheckedMaxValue = true;
+                this.isCheckedMinimal = false;
+            } else if (this.current_mode=='minimal') {
+                this.isCheckedWeighted = false;
+                this.isCheckedMean = false;
+                this.isCheckedMeanVariable = false;
+                this.isCheckedMaxValue = false;
+                this.isCheckedMinimal = true;
+            }
+
+        },/*
         onClickWeighted() {
             this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
             if (this.isCheckedWeighted){
@@ -275,89 +329,58 @@ const app = Vue.createApp({
                 document.getElementById('capped_qual_checkbox').checked = false;
 
             }
+        },*/
+        onChangeDataSelect() {
+            this.currentLookup = document.getElementById("dataset_select").value;
         },
-         // These should be radio buttons and I probably woulda saved myself some time...
-        onClickAdjustUp() {
-            if (this.isClickAdjustUp) {
-                // If we're already set, just force the checkmark
-                document.getElementById('adjust_up').checked = true;
+        onAdjustmentSelect() {
+            this.current_adjust = document.getElementById("adjustment_mode_select").value;
+            if (this.current_adjust=='up') {
+                this.isClickAdjustUp = true;
+                this.isClickAdjustMiddle = false;
+                this.isClickAdjustDown = false;
+            } else if  (this.current_adjust=='middle') {
+                this.isClickAdjustUp = false;
+                this.isClickAdjustMiddle = true;
+                this.isClickAdjustDown = false;
+            } else if (this.current_adjust=='down') {
+                this.isClickAdjustUp = false;
+                this.isClickAdjustMiddle = false;
+                this.isClickAdjustDown = true;
             }
-           // otherwise change mode
-           this.isClickAdjustUp = true;
-           this.isClickAdjustMiddle = false;
-           this.isClickAdjustDown = false;
-           document.getElementById('adjust_up').checked = true;
-           document.getElementById('adjust_middle').checked = false;
-           document.getElementById('adjust_down').checked = false;
         },
-        onClickAdjustMiddle() {
-            if (this.isClickAdjustMiddle) {
-                // If we're already set, just force the checkmark
-                document.getElementById('adjust_middle').checked = true;
+        onCappingChange() {
+            this.current_cap = document.getElementById("capping_select");
+            if (this.current_cap == 'qual') {
+                if (['mean', 'mean_variable', 'max'].includes(this.current_mode)) {
+                    console.log("Cap doesn't make sense here")
+                    document.getElementById("capping_select").value='none';
+                    this.current_cap = 'none';
+                    this.isCheckedCappedMacro = false;
+                    this.isCheckedCappedQualitative = false;
+                } else {
+                  this.isCheckedCappedMacro = false;
+                  this.isCheckedCappedQualitative = true;
+                }
+            } else if (this.current_cap == 'macro') {
+                if (['mean', 'mean_variable', 'max'].includes(this.current_mode)) {
+                    console.log("Cap doesn't make sense here")
+                    document.getElementById("capping_select").value='none';
+                    this.current_cap = 'none';
+                    this.isCheckedCappedMacro = false;
+                    this.isCheckedCappedQualitative = false;
+                } else {
+                  this.isCheckedCappedMacro = true;
+                  this.isCheckedCappedQualitative = false;
+                }
+            } else if (this.current_cap=='none') {
+                this.isCheckedCappedMacro = false;
+                this.isCheckedCappedQualitative = false;
             }
-           // otherwise change mode
-           this.isClickAdjustUp = false;
-           this.isClickAdjustMiddle = true;
-           this.isClickAdjustDown = false;
-           document.getElementById('adjust_up').checked = false;
-           document.getElementById('adjust_middle').checked = true;
-           document.getElementById('adjust_down').checked = false;
-        },
-        onClickAdjustDown() {
-            if (this.isClickAdjustDown) {
-                // If we're already set, just force the checkmark
-                document.getElementById('adjust_down').checked = true;
-            }
-            // otherwise change mode
-            this.isClickAdjustUp = false;
-            this.isClickAdjustMiddle = false;
-            this.isClickAdjustDown = true;
-            document.getElementById('adjust_up').checked = false;
-            document.getElementById('adjust_middle').checked = false;
-            document.getElementById('adjust_down').checked = true;
-        },
-        onClickAdjusted() {
-            if (this.currentLookup=='adjusted_base') {
-                document.getElementById('adjusted_checkbox').checked = true;
-            }
-            document.getElementById("adjusted_checkbox").checked = true;
-            document.getElementById("qual_rank_bin_checkbox").checked=false;
-            document.getElementById("linear_clust_checkbox").checked=false;
-            document.getElementById("linear_checkbox").checked=false;
-            this.currentLookup = "adjusted";
 
-        },
-        onClickQualRankBin() {
-            if (this.currentLookup=='base') {
-                document.getElementById('qual_rank_bin_checkbox').checked = true;
-            }
-            document.getElementById("adjusted_checkbox").checked = false;
-            document.getElementById("qual_rank_bin_checkbox").checked=true;
-            document.getElementById("linear_clust_checkbox").checked=false;
-            document.getElementById("linear_checkbox").checked=false;
-            this.currentLookup = "base";
-        },
-        onClickLinearClust() {
-            if (this.currentLookup=='linear_clust') {
-                document.getElementById('linear_clust_checkbox').checked = true;
-            }
-            document.getElementById("adjusted_checkbox").checked = false;
-            document.getElementById("qual_rank_bin_checkbox").checked=false;
-            document.getElementById("linear_clust_checkbox").checked=true;
-            document.getElementById("linear_checkbox").checked=false;
-            this.currentLookup = "linear_clust";
-        },
-        onClickLinear() {
-            if (this.currentLookup=='linear') {
-                document.getElementById('linear_checkbox').checked = true;
-            }
-            document.getElementById("adjusted_checkbox").checked = false;
-            document.getElementById("qual_rank_bin_checkbox").checked=false;
-            document.getElementById("linear_clust_checkbox").checked=false;
-            document.getElementById("linear_checkbox").checked=true;
-            this.currentLookup = "linear";
-        },
-        onClickCappedQualitative() {
+
+        }, 
+        /*onClickCappedQualitative() {
             this.isCheckedCappedQualitative = document.getElementById('capped_qual_checkbox').checked
             if (this.isCheckedCappedQualitative){
                 //if true disable mean mode and checkbox
@@ -384,7 +407,7 @@ const app = Vue.createApp({
                 this.isCheckedCappedQualitative = false
                 document.getElementById('capped_qual_checkbox').checked = false;
             }
-        },
+        },*/
         resetSelected() {
             this.cvssSelected = {}
             for([metricType, metricTypeData] of Object.entries(this.cvssConfigData)) {
