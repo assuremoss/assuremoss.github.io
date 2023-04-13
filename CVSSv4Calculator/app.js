@@ -326,7 +326,6 @@ const app = Vue.createApp({
             document.getElementById("linear_checkbox").checked=false;
             this.currentLookup = "adjusted";
 
-            //this.isLookupAdjusted = document.getElementById('adjusted_checkbox').checked
         },
         onClickQualRankBin() {
             if (this.currentLookup=='base') {
