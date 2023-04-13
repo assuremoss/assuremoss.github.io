@@ -37,12 +37,13 @@
                 </mark><br>
                 Macro vector: {{ macroVector }}<br>
                 <h5>
-                    Base Macro vector score scaling to use
+                    Base Macro vector scores to use
                     </h5>
                     <h6>
                         <select id="dataset_select" @change="onChangeDataSelect()">
-                            <option value="linear">Linear Rescaling</option>
-                            <option value="linear_clust">Linear Clustering</option>
+                            <option value="rank">Linear Rank Rescaling</option>
+                            <option value="linear">Linear Mean Score Rescaling</option>
+                            <option value="linear_clust">Linear Mean Score Clustering</option>
                             <option value="base">Qualitative Splits with Binned Ranking: "Original" Elo scores</option>
                             <option value="adjusted" selected>Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)</option>
                         </select>
