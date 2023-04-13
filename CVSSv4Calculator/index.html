@@ -48,10 +48,20 @@
 		<h6><b>Mode 4</b> forthcoming</h6>
                 </h5>
                 <h5>
-                Tick the checkbox to use the adjusted Elo score
-                <h6></h6>
-                <input type = "checkbox" id="adjusted_checkbox" @click="onClickAdjusted()"> Adjusted Elo Score: reduced outliers between EQ3 and EQ4 (XSS fix)<br>
+                Base Macro vector score scaling to use
                 </h5>
+                <h6>
+                    <input type = "checkbox" id="linear_checkbox" @click="onClickLinear()">Linear Rescaling<br>
+                </h6>
+                <h6>
+                    <input type = "checkbox" id="linear_clust_checkbox" @click="onClickLinearClust()">Linear Clustering<br>
+                </h6>
+                <h6>
+                    <input type = "checkbox" id="qual_rank_bin_checkbox" @click="onClickQualRankBin()">Qualitative Splits with Binned Ranking: "Original" Elo scores<br>
+                </h6>
+                <h6>
+                    <input type = "checkbox" id="adjusted_checkbox" @click="onClickAdjusted()" checked=true> Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)<br>
+                </h6>
                 <h5>
                     Adjust the macrovectors up or down.
                 </h5>

@@ -9,7 +9,6 @@ const app = Vue.createApp({
         return {
             cvssConfigData: cvssConfig,
             cvssLookupData: cvssLookup,
-            cvssLookupDataAdjusted: cvssLookup_adjusted,
             maxComposedData: maxComposed,
             maxHammingData: maxHamming,
             maxHammingVariableData: maxHammingVariable,
@@ -31,7 +30,8 @@ const app = Vue.createApp({
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0,
-            isLookupAdjusted: false
+            currentLookup: "adjusted",
+            lookupMap: {"base":cvssLookup, "adjusted":cvssLookup_adjusted, "linear_clust":cvssLookup_cluster_mean, "linear":cvssLookup_linear}
         }
     },
     methods: {
@@ -157,9 +157,7 @@ const app = Vue.createApp({
             window.location.hash = ""
             this.cvssMaxVector = null
         },
-        onClickAdjusted() {
-            this.isLookupAdjusted = document.getElementById('adjusted_checkbox').checked
-        },
+
         onClickWeighted() {
             this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
             if (this.isCheckedWeighted){
@@ -318,6 +316,48 @@ const app = Vue.createApp({
             document.getElementById('adjust_middle').checked = false;
             document.getElementById('adjust_down').checked = true;
         },
+        onClickAdjusted() {
+            if (this.currentLookup=='adjusted_base') {
+                document.getElementById('adjusted_checkbox').checked = true;
+            }
+            document.getElementById("adjusted_checkbox").checked = true;
+            document.getElementById("qual_rank_bin_checkbox").checked=false;
+            document.getElementById("linear_clust_checkbox").checked=false;
+            document.getElementById("linear_checkbox").checked=false;
+            this.currentLookup = "adjusted";
+
+            //this.isLookupAdjusted = document.getElementById('adjusted_checkbox').checked
+        },
+        onClickQualRankBin() {
+            if (this.currentLookup=='base') {
+                document.getElementById('qual_rank_bin_checkbox').checked = true;
+            }
+            document.getElementById("adjusted_checkbox").checked = false;
+            document.getElementById("qual_rank_bin_checkbox").checked=true;
+            document.getElementById("linear_clust_checkbox").checked=false;
+            document.getElementById("linear_checkbox").checked=false;
+            this.currentLookup = "base";
+        },
+        onClickLinearClust() {
+            if (this.currentLookup=='linear_clust') {
+                document.getElementById('linear_clust_checkbox').checked = true;
+            }
+            document.getElementById("adjusted_checkbox").checked = false;
+            document.getElementById("qual_rank_bin_checkbox").checked=false;
+            document.getElementById("linear_clust_checkbox").checked=true;
+            document.getElementById("linear_checkbox").checked=false;
+            this.currentLookup = "linear_clust";
+        },
+        onClickLinear() {
+            if (this.currentLookup=='linear') {
+                document.getElementById('linear_checkbox').checked = true;
+            }
+            document.getElementById("adjusted_checkbox").checked = false;
+            document.getElementById("qual_rank_bin_checkbox").checked=false;
+            document.getElementById("linear_clust_checkbox").checked=false;
+            document.getElementById("linear_checkbox").checked=true;
+            this.currentLookup = "linear";
+        },
         onClickCappedQualitative() {
             this.isCheckedCappedQualitative = document.getElementById('capped_qual_checkbox').checked
             if (this.isCheckedCappedQualitative){
@@ -383,13 +423,7 @@ const app = Vue.createApp({
             if(lookup.includes("33")) {
                 return "0.0"
             }
-
-            if(this.isLookupAdjusted){
-                this.max_base_value = this.cvssLookupDataAdjusted[lookup]
-            }
-            else{
-                this.max_base_value = this.cvssLookupData[lookup]
-            }
+            this.max_base_value = this.lookupMap[this.currentLookup][lookup]
             return this.max_base_value
         },
         macroVector() {
@@ -518,12 +552,7 @@ const app = Vue.createApp({
         },
         baseScore() {
             //define lookup table
-            if(this.isLookupAdjusted){
-                lookuptable = this.cvssLookupDataAdjusted
-            }
-            else{
-                lookuptable = this.cvssLookupData
-            }
+            lookuptable = this.lookupMap[this.currentLookup];
 
             this.cvssMaxVector = null
             if((this.isCheckedWeighted || this.isCheckedMeanVariable) && !(this.isCheckedMean) && !(this.isCheckedMinimal)){
