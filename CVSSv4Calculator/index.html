@@ -15,6 +15,7 @@
         <script src="cvss_lookup.js?v=5"></script>
         <script src="max_composed.js"></script>
         <script src="max_hamming.js"></script>
+        <script src="bayesian_cvss4_model_params.js"></script>
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre-exp.min.css">
         <link rel="stylesheet" href="https://unpkg.com/spectre.css@0.5.9/dist/spectre-icons.min.css">
@@ -57,6 +58,7 @@
                         <option value="mean"><b>Mode 3</b>: Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Hamming Distance)</option>
                         <option value="weighted"><b>Mode 5</b>: Variable Change (Weighted Hamming Distance)</option>
                         <option value="mean_variable"><b>Mode 6</b>: Variable Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Weighted Hamming Distance)</option>
+                        <option value="algebra"><b>Mode أل</b>: Algebra derived formula (ignores all other selections as they are not applicable)</option>
                     </select><br>
                     <!--
                 <input type = "checkbox" id="max_checkbox" @click="onClickMaxValue()"> <b>Mode 0</b>: Raw Elo Score of Macro Vector<br>
