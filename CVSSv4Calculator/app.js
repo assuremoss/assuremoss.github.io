@@ -140,15 +140,15 @@ const app = Vue.createApp({
             // The three security requirements metrics have X equivalent to H.
             // CR:X is the same as CR:H
             if(metric == "CR" && selected == "X") {
-                return "H"
+                return "M"
             }
             // IR:X is the same as IR:H
             if(metric == "IR" && selected == "X") {
-                return "H"
+                return "M"
             }
             // AR:X is the same as AR:H
             if(metric == "AR" && selected == "X") {
-                return "H"
+                return "M"
             }
 
             // All other environmental metrics just overwrite base score values,
@@ -603,9 +603,11 @@ const app = Vue.createApp({
                         model_met_vals[m.substring(1, 3)] = modified_met_vals[m];
                     }
                 }
+                console.log(model_met_vals);
                 for (m in ["CR", "AR", "IR"]) {
                     if (model_met_vals[m] == 'X') {
-                        model_met_vals[m] = "H";
+                        console.log("Setting default " + m + " to M")
+                        model_met_vals[m] = "M";
                     }
                 }
                 if (Object.keys(model_met_vals).includes("E")) {
@@ -619,9 +621,10 @@ const app = Vue.createApp({
                 model_values = Object.keys(cvss_algebra_values['met_vals']).map(m=> {
                     return cvss_algebra_values['met_vals'][m][model_met_vals[m]]
                 });
-                vect_lo =model_values.reduce((x, y) => x+y);
+                vect_lo =model_values.reduce((x, y) => x+y, 0);
+                console.log(vect_lo);
                 vect_pred =  Math.exp((-1/cvss_algebra_values['nu']) * Math.log(1 + Math.exp(-vect_lo)));
-                vect_scale = 0.1 + 9.9*(vect_pred-cvss_algebra_values['min_pred'])/(cvss_algebra_values['max_pred']-cvss_algebra_values['min_pred']);
+                vect_scale = 0.1 + 9.9*(vect_pred-cvss_algebra_values['min_pred'])/(cvss_algebra_values['max_base_pred']-cvss_algebra_values['min_pred']);
                 if (vect_scale > 10.0) {
                     vect_scale = 10.0
                 } else if (vect_scale < 0) {
@@ -630,7 +633,8 @@ const app = Vue.createApp({
                 if (no_impact) {
                     vect_scale = 0;
                 }
-                this.current_value = vect_scale.toFixed(1);
+                final_val = Math.ceil(vect_scale*10)/10;
+                this.current_value = final_val.toFixed(1);
                 return vect_scale.toFixed(1);
             }
 
