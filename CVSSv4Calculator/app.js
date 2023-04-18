@@ -30,6 +30,7 @@ const app = Vue.createApp({
             isClickAdjustMiddle: false,
             isClickAdjustUp: false,
             current_adjust: "down", // For later to get rid of booleans
+            enviro_default: "M",
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0,
@@ -136,19 +137,18 @@ const app = Vue.createApp({
             if(metric == "E" && selected == "X") {
                 return "A"
             }
-
             // The three security requirements metrics have X equivalent to H.
             // CR:X is the same as CR:H
             if(metric == "CR" && selected == "X") {
-                return "M"
+                return this.enviro_default;
             }
             // IR:X is the same as IR:H
             if(metric == "IR" && selected == "X") {
-                return "M"
+                return this.enviro_default;
             }
             // AR:X is the same as AR:H
             if(metric == "AR" && selected == "X") {
-                return "M"
+                return this.enviro_default;
             }
 
             // All other environmental metrics just overwrite base score values,
@@ -346,6 +346,9 @@ const app = Vue.createApp({
         onChangeDataSelect() {
             this.currentLookup = document.getElementById("dataset_select").value;
         },
+        onEnviroChange() {
+            this.enviro_default = document.getElementById('enviro_default').value;
+        },
         onAdjustmentSelect() {
             this.current_adjust = document.getElementById("adjustment_mode_select").value;
             if (this.current_adjust=='up') {
@@ -363,7 +366,7 @@ const app = Vue.createApp({
             }
         },
         onCappingChange() {
-            this.current_cap = document.getElementById("capping_select");
+            this.current_cap = document.getElementById("capping_select").value;
             if (this.current_cap == 'qual') {
                 if (['mean', 'mean_variable', 'max'].includes(this.current_mode)) {
                     console.log("Cap doesn't make sense here")
