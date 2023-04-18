@@ -606,10 +606,9 @@ const app = Vue.createApp({
                         model_met_vals[m.substring(1, 3)] = modified_met_vals[m];
                     }
                 }
-                console.log(model_met_vals);
                 for (m in ["CR", "AR", "IR"]) {
                     if (model_met_vals[m] == 'X') {
-                        console.log("Setting default " + m + " to M")
+                        //console.log("Setting default " + m + " to M")
                         model_met_vals[m] = "M";
                     }
                 }
@@ -625,7 +624,6 @@ const app = Vue.createApp({
                     return cvss_algebra_values['met_vals'][m][model_met_vals[m]]
                 });
                 vect_lo =model_values.reduce((x, y) => x+y, 0);
-                console.log(vect_lo);
                 vect_pred =  Math.exp((-1/cvss_algebra_values['nu']) * Math.log(1 + Math.exp(-vect_lo)));
                 vect_scale = 0.1 + 9.9*(vect_pred-cvss_algebra_values['min_pred'])/(cvss_algebra_values['max_base_pred']-cvss_algebra_values['min_pred']);
                 if (vect_scale > 10.0) {
