@@ -13,6 +13,7 @@ const app = Vue.createApp({
             maxHammingVariableData: maxHammingVariable,
             cvssMacroVectorDetailsData: cvssMacroVectorDetails,
             cvssMacroVectorValuesData: cvssMacroVectorValues,
+            modelParams:cvss_algebra_values,
             showDetails: false,
             cvssSelected: null,
             header_height: 0,
@@ -210,6 +211,12 @@ const app = Vue.createApp({
                 this.isCheckedMaxValue = true;
                 this.isCheckedMinimal = false;
             } else if (this.current_mode=='minimal') {
+                this.isCheckedWeighted = false;
+                this.isCheckedMean = false;
+                this.isCheckedMeanVariable = false;
+                this.isCheckedMaxValue = false;
+                this.isCheckedMinimal = true;
+            } else if (this.current_mode=='algebra') {
                 this.isCheckedWeighted = false;
                 this.isCheckedMean = false;
                 this.isCheckedMeanVariable = false;
@@ -582,6 +589,56 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
+
+            if (this.current_mode== 'algebra') {
+                model_met_vals = {};
+                modified_met_vals = {};
+                for (m in this.cvssSelected) {
+                    //console.log([m, this.m(m)]);
+                    if (m.startsWith("M")) {
+                        modified_met_vals[m] = this.m(m);
+                    } else {
+                        model_met_vals[m] = this.m(m);
+                    }
+                }
+                for (m in modified_met_vals) {
+                    if (modified_met_vals[m] != 'X') {
+                        model_met_vals[m.substring(1, 3)] = modified_met_vals[m];
+                    }
+                }
+                for (m in ["CR", "AR", "IR"]) {
+                    if (model_met_vals[m] == 'X') {
+                        //console.log("Setting default " + m + " to M")
+                        model_met_vals[m] = "M";
+                    }
+                }
+                if (Object.keys(model_met_vals).includes("E")) {
+                    if (model_met_vals["E"] == 'X') {
+                        model_met_vals["E"] = "A";
+                    }
+                } else {
+                    model_met_vals["E"] = "A";
+                }
+                no_impact = ['VC', 'VI', 'VA', "SC", "SI", "SA"].map(m=>model_met_vals[m]).reduce((x,y) => x && y=='N',true);
+                model_values = Object.keys(cvss_algebra_values['met_vals']).map(m=> {
+                    return cvss_algebra_values['met_vals'][m][model_met_vals[m]]
+                });
+                vect_lo =model_values.reduce((x, y) => x+y, 0);
+                vect_pred =  Math.exp((-1/cvss_algebra_values['nu']) * Math.log(1 + Math.exp(-vect_lo)));
+                vect_scale = 0.1 + 9.9*(vect_pred-cvss_algebra_values['min_pred'])/(cvss_algebra_values['max_base_pred']-cvss_algebra_values['min_pred']);
+                if (vect_scale > 10.0) {
+                    vect_scale = 10.0
+                } else if (vect_scale < 0) {
+                    vect_scale = 0;
+                }
+                if (no_impact) {
+                    vect_scale = 0;
+                }
+                final_val = Math.ceil(vect_scale*10)/10;
+                this.current_value = final_val.toFixed(1);
+                return vect_scale.toFixed(1);
+            }
+
             //define lookup table
             lookuptable = this.lookupMap[this.currentLookup];
 
