@@ -78,6 +78,15 @@
                         <option value="down" selected>Down</option>
                     </select> 
                 <h5>
+                    Default Environmental Value
+                </h5>
+                    <h6>
+                        Having the default environmental value be "Medium" can have some strange effects with interpolation modes. In particular with high scoring macrovectors and downward interpolation</h6>
+                        <select id="enviro_default" @change="onEnviroChange()">
+                            <option value="M" selected>Medium</option>
+                            <option value="H">High</option>
+                        </select> 
+                <h5>
                     Capping
                 <h6>The scores above are "free" to change and to go beyond the lower levels. If you want them capped tick your preferred option.<br>
                     <select id="capping_select" @change="onCappingChange()">
