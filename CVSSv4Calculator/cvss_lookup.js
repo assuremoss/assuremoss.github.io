@@ -275,7 +275,7 @@ cvssLookup = {
  "211221":"0.2",
  "212221":"0.1"
  }
- cvssLookup_adjusted = {
+cvssLookup_adjusted = {
 "000000":"10",
 "000001":"10",
 "000100":"10",
