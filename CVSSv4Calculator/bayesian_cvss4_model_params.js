@@ -80,5 +80,6 @@ cvss_algebra_values = {
   "nu": 0.7257,
   "min_pred": 0.0836,
   "max_pred": 0.8463,
-  "max_base_pred": 0.7441
+  "max_base_pred": 0.7441,
+  "max_min_base_pred": 0.5954
 }
