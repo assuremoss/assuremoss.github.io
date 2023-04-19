@@ -27,16 +27,38 @@
             <div id="header">
                 <h4>CVSS v4.0 calculator – DRAFT</h4>
                 <h5> Look and feel from <A HREF="https://redhatproductsecurity.github.io/cvss-v4-calculator">Redhat</A>. Source code <A HREF="https://github.com/assuremoss/assuremoss.github.io/tree/main/CVSSv4Calculator">here</A> </h5>
-                Current Vector,Score:
+                Current Vector:
                 <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVectorCurrent">
-                    {{ vector }},{{ baseScore }}
+                    {{ vector }}
                 </mark><button class="btn btn-sm ml-2" @click="onReset()">Reset</button>
                 <br>
+                Macro vector: {{ macroVector }}
+                <h5>
+                    Scoring Mode Presets
+                </h5>
+                    <h6>
+                        <select id="preset_select" @change="onChangePresent()">
+                            <option value="raw_elo" selected>A: Original Elo scores, no interpolation</option>
+                            <option value="xss_fix">B: Adjusted Elo Scores to fix outliners and downard, mean interpolation</option>
+                            <option value="linear_up">C: Linear up adjustment</option>
+                            <option value="middle_out">D: Original Elo middle out variable</option>
+                            <option value="algebra">E: Algebra</option>
+                        </select>
+                    </h6>
+                <h5>
+                    <span class="tooltip tooltip-bottom c-hand"
+                          :data-tooltip="showOptions ? 'Hide options' : 'Show options'"
+                          @click="showOptions = !showOptions">
+                        Scoring Mode Details
+                        <span v-if="!showOptions"> ⊕</span>
+                        <span v-else> ⊖</span>
+                    </span>
+                </h5>
+                <blockquote v-show="showOptions">
                 Highest Severity Vector,Score: 
                 <mark class="tooltip c-hand" data-tooltip="Click vector to copy to clipboard" @click="copyVectorMax">
                     CVSS:4.0/{{ cvssMaxVector }},{{ MaxBaseScore }}
-                </mark><br>
-                Macro vector: {{ macroVector }}<br>
+                </mark>
                 <h5>
                     Base Macro vector scores to use
                     </h5>
@@ -45,16 +67,16 @@
                             <option value="rank">Linear Rank Rescaling</option>
                             <option value="linear">Linear Mean Score Rescaling</option>
                             <option value="linear_clust">Linear Mean Score Clustering</option>
-                            <option value="base">Qualitative Splits with Binned Ranking: "Original" Elo scores</option>
-                            <option value="adjusted" selected>Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)</option>
+                            <option value="base" selected>Qualitative Splits with Binned Ranking: "Original" Elo scores</option>
+                            <option value="adjusted">Adjusted Qualitation Bin Ranking: reduced outliers between EQ3 and EQ4 (XSS fix)</option>
                         </select>
                     </h6>
                 <h5>
                 Macrovector Adjustment Mode
                 <h6>
                     <select id="mode_select" @change="onChangeModeSelect()">
-                        <option value="max"> <b>Mode 0</b>: Raw Elo Score of Macro Vector</option>
-                        <option value="minimal" selected><b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)</option>
+                        <option value="max" selected> <b>Mode 0</b>: Raw Elo Score of Macro Vector</option>
+                        <option value="minimal"><b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)</option>
                         <option value="mean"><b>Mode 3</b>: Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Hamming Distance)</option>
                         <option value="weighted"><b>Mode 5</b>: Variable Change (Weighted Hamming Distance)</option>
                         <option value="mean_variable"><b>Mode 6</b>: Variable Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Weighted Hamming Distance)</option>
@@ -76,8 +98,8 @@
                     Macrovectors can be adjusted from the minimal vector upwards (increasing the score) or down from the maximal vector within an equivalence class value. As an alternative they can also be adjusted from the middle out.</h6>
                     <select id="adjustment_mode_select" @change="onAdjustmentSelect()">
                         <option value="up">Up</option>
-                        <option value="middle">Middle Out</option>
-                        <option value="down" selected>Down</option>
+                        <option value="middle" selected>Middle Out</option>
+                        <option value="down">Down</option>
                     </select> 
                 <h5>
                     Default Environmental Value
@@ -97,20 +119,20 @@
                         <option value="macro">Max Change Bounded to MacroVector</option>
                     </select>
                 </h6>
-		        <!-- <input type = "checkbox" id="capped_qual_checkbox" @click="onClickCappedQualitative()"> Max Change Bounded to Qualitative Score<br>
-                <input type = "checkbox" id="capped_macro_checkbox" @click="onClickCappedMacro()"> Max Change Bounded to MacroVector<br>-->
                 </h5>
+            </blockquote>
                 <h5>
                     <span class="tooltip tooltip-bottom c-hand"
                           :data-tooltip="showDetails ? 'Hide details' : 'Show details'"
                           @click="showDetails = !showDetails">
                         CVSS v4.0 Score:
-                        <span :class="baseScoreClass(qualScore)">{{ baseScore }} / {{ qualScore }}</span>
+                        <span id="final_score" :class="baseScoreClass(qualScore)">{{ baseScore }} / {{ qualScore }}</span>
                         <span v-if="!showDetails"> ⊕</span>
                         <span v-else> ⊖</span>
                     </span>
                 </h5>
                 <blockquote v-if="showDetails">
+                    Score = macrovector score + adjustment = {{MaxBaseScore}} {{MaxBaseScore>baseScore?"-":"+"}} {{(Math.abs(baseScore-MaxBaseScore).toFixed(1))}}
                     <div v-for="(index, description) in cvssMacroVectorDetailsData">
                         {{ description }}: {{ cvssMacroVectorValuesData[macroVector[index]] }}
                     </div>

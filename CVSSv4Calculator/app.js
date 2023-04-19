@@ -15,26 +15,27 @@ const app = Vue.createApp({
             cvssMacroVectorValuesData: cvssMacroVectorValues,
             modelParams:cvss_algebra_values,
             showDetails: false,
+            showOptions: false,
             cvssSelected: null,
             header_height: 0,
             current_cap: "none",
             isCheckedCappedQualitative: false,
             isCheckedCappedMacro: false,
-            current_mode: "minimal",// For later to get rid of the booleans
+            current_mode: "max",// For later to get rid of the booleans
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMeanVariable: false,
-            isCheckedMaxValue: false,
-            isCheckedMinimal: true,
-            isClickAdjustDown: true,
-            isClickAdjustMiddle: false,
+            isCheckedMaxValue: true,
+            isCheckedMinimal: false,
+            isClickAdjustDown: false,
+            isClickAdjustMiddle: true,
             isClickAdjustUp: false,
-            current_adjust: "down", // For later to get rid of booleans
+            current_adjust: "middle", // For later to get rid of booleans
             enviro_default: "M",
             cvssMaxVector: null,
             max_base_value: 0.0,
             current_value: 0.0,
-            currentLookup: "adjusted",
+            currentLookup: "base",
             lookupMap: {
                 "base":cvssLookup, 
                 "adjusted":cvssLookup_adjusted,
@@ -166,6 +167,56 @@ const app = Vue.createApp({
             window.location.hash = ""
             this.cvssMaxVector = null
         },
+        onChangePresent() {
+            this.preset = document.getElementById("preset_select").value;
+            switch(this.preset) {
+                case "raw_elo":
+                    document.getElementById("dataset_select").value = 'base';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'max';
+                    this.onChangeModeSelect();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
+                    break;
+                case "xss_fix":
+                    document.getElementById("dataset_select").value = 'adjusted';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'mean';
+                    this.onChangeModeSelect();
+                    document.getElementById("adjustment_mode_select").value='down';
+                    this.onAdjustmentSelect();
+                    document.getElementById("enviro_default").value = 'H';
+                    this.onEnviroChange();
+                    break;
+                case "linear_up":
+                    document.getElementById("dataset_select").value = 'linear_clust';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'mean';
+                    this.onChangeModeSelect();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
+                    document.getElementById("adjustment_mode_select").value='up';
+                    this.onAdjustmentSelect();
+                    break;
+                case "middle_out":
+                    document.getElementById("dataset_select").value = 'base';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'mean_variable';
+                    this.onChangeModeSelect();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
+                    document.getElementById("adjustment_mode_select").value='middle';
+                    this.onAdjustmentSelect();
+                    break;
+                case "algebra":
+                    document.getElementById("mode_select").value='algebra';
+                    this.onChangeModeSelect();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
+                    break;
+            }
+
+        },
         onChangeModeSelect() {
             this.current_mode = document.getElementById("mode_select").value;
             if (this.current_mode == 'weighted') {
@@ -175,7 +226,6 @@ const app = Vue.createApp({
                 this.isCheckedMaxValue = false;
                 this.isCheckedMinimal = false;
             } else if (this.current_mode == 'mean') {
-                console.log("Cap doesn't make sense here")
                 document.getElementById("capping_select").value='none';
                 this.current_cap = 'none';
                 this.isCheckedCappedMacro = false
@@ -187,7 +237,6 @@ const app = Vue.createApp({
                 this.isCheckedMaxValue = false;
                 this.isCheckedMinimal = false;
             } else if (this.current_mode=='mean_variable'){
-                console.log("Cap doesn't make sense here")
                 document.getElementById("capping_select").value='none';
                 this.current_cap = 'none';
                 this.isCheckedCappedMacro = false
@@ -199,7 +248,6 @@ const app = Vue.createApp({
                 this.isCheckedMaxValue = false;
                 this.isCheckedMinimal = false;
             } else if (this.current_mode=='max') {
-                console.log("Cap doesn't make sense here")
                 document.getElementById("capping_select").value='none';
                 this.current_cap = 'none';
                 this.isCheckedCappedMacro = false
@@ -221,128 +269,10 @@ const app = Vue.createApp({
                 this.isCheckedMean = false;
                 this.isCheckedMeanVariable = false;
                 this.isCheckedMaxValue = false;
-                this.isCheckedMinimal = true;
+                this.isCheckedMinimal = false;
             }
 
-        },/*
-        onClickWeighted() {
-            this.isCheckedWeighted = document.getElementById('weighted_checkbox').checked
-            if (this.isCheckedWeighted){
-                //if true disable mean mode and checkbox
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedMaxValue = false
-                document.getElementById('max_checkbox').checked = false;
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-   
-            }
         },
-        onClickMeanVariable() {
-            this.isCheckedMeanVariable = document.getElementById('mean_variable_checkbox').checked
-            if (this.isCheckedMeanVariable){
-                //if true disable mean mode and checkbox
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedWeighted = false
-                document.getElementById('weighted_checkbox').checked = false;
-
-                this.isCheckedMaxValue = false
-                document.getElementById('max_checkbox').checked = false;
-
-                this.isCheckedCappedMacro = false
-                document.getElementById('capped_macro_checkbox').checked = false;
-
-                this.isCheckedCappedQualitative = false
-                document.getElementById('capped_qual_checkbox').checked = false;
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-
-            }
-        },
-        onClickMean() {
-            this.isCheckedMean = document.getElementById('mean_checkbox').checked
-            if (this.isCheckedMean){
-                //if true disable mean mode and checkbox
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedWeighted = false
-                document.getElementById('weighted_checkbox').checked = false;
-
-                this.isCheckedMaxValue = false
-                document.getElementById('max_checkbox').checked = false;
-
-
-                this.isCheckedCappedMacro = false
-                document.getElementById('capped_macro_checkbox').checked = false;
-
-                this.isCheckedCappedQualitative = false
-                document.getElementById('capped_qual_checkbox').checked = false;
-
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-
-            }
-        },
-        onClickMinimal(){
-            this.isCheckedMinimal = document.getElementById('minimal_checkbox').checked
-
-            if (this.isCheckedMinimal){
-                //if true disable mean mode and checkbox
-
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedWeighted = false
-                document.getElementById('weighted_checkbox').checked = false;
-
-                this.isCheckedMaxValue = false
-                document.getElementById('max_checkbox').checked = false;   
-
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedCappedMacro = false
-                document.getElementById('capped_macro_checkbox').checked = false;
-
-                this.isCheckedCappedQualitative = false
-                document.getElementById('capped_qual_checkbox').checked = false;
-            }
-        },
-        onClickMaxValue(){
-            this.isCheckedMaxValue = document.getElementById('max_checkbox').checked
-            if (this.isCheckedMaxValue){
-                //disable other
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedWeighted = false
-                document.getElementById('weighted_checkbox').checked = false;
-
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-
-                this.isCheckedMinimal = false
-                document.getElementById('minimal_checkbox').checked = false;
-
-                this.isCheckedCappedMacro = false
-                document.getElementById('capped_macro_checkbox').checked = false;
-
-                this.isCheckedCappedQualitative = false
-                document.getElementById('capped_qual_checkbox').checked = false;
-
-            }
-        },*/
         onChangeDataSelect() {
             this.currentLookup = document.getElementById("dataset_select").value;
         },
@@ -396,34 +326,6 @@ const app = Vue.createApp({
 
 
         }, 
-        /*onClickCappedQualitative() {
-            this.isCheckedCappedQualitative = document.getElementById('capped_qual_checkbox').checked
-            if (this.isCheckedCappedQualitative){
-                //if true disable mean mode and checkbox
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedCappedMacro = false
-                document.getElementById('capped_macro_checkbox').checked = false;
-            }
-        },
-        onClickCappedMacro() {
-            this.isCheckedCappedMacro = document.getElementById('capped_macro_checkbox').checked
-            if (this.isCheckedCappedMacro){
-                //if true disable mean mode and checkbox
-                this.isCheckedMeanVariable = false
-                document.getElementById('mean_variable_checkbox').checked = false;
-
-                this.isCheckedMean = false
-                document.getElementById('mean_checkbox').checked = false;
-
-                this.isCheckedCappedQualitative = false
-                document.getElementById('capped_qual_checkbox').checked = false;
-            }
-        },*/
         resetSelected() {
             this.cvssSelected = {}
             for([metricType, metricTypeData] of Object.entries(this.cvssConfigData)) {
@@ -589,7 +491,6 @@ const app = Vue.createApp({
             return eq1 + eq2 + eq3 + eq4 + eq5 +eq6
         },
         baseScore() {
-
             if (this.current_mode== 'algebra') {
                 model_met_vals = {};
                 modified_met_vals = {};
