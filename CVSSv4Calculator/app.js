@@ -188,6 +188,18 @@ const app = Vue.createApp({
                     document.getElementById("enviro_default").value = 'H';
                     this.onEnviroChange();
                     break;
+                case "cap_up":
+                    document.getElementById("dataset_select").value = 'base';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'minimal';
+                    this.onChangeModeSelect();
+                    document.getElementById("adjustment_mode_select").value='up';
+                    this.onAdjustmentSelect();
+                    document.getElementById("capping_select").value='macro';
+                    this.onCappingChange();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
+                    break;
                 case "linear_up":
                     document.getElementById("dataset_select").value = 'linear_clust';
                     this.onChangeDataSelect();
@@ -197,6 +209,18 @@ const app = Vue.createApp({
                     this.onEnviroChange();
                     document.getElementById("adjustment_mode_select").value='up';
                     this.onAdjustmentSelect();
+                    break;
+                case "var_cap_up":
+                    document.getElementById("dataset_select").value = 'linear_clust';
+                    this.onChangeDataSelect();
+                    document.getElementById("mode_select").value = 'weighted';
+                    this.onChangeModeSelect();
+                    document.getElementById("adjustment_mode_select").value='up';
+                    this.onAdjustmentSelect();
+                    document.getElementById("capping_select").value='qual';
+                    this.onCappingChange();
+                    document.getElementById("enviro_default").value = 'M';
+                    this.onEnviroChange();
                     break;
                 case "middle_out":
                     document.getElementById("dataset_select").value = 'base';
@@ -299,7 +323,6 @@ const app = Vue.createApp({
             this.current_cap = document.getElementById("capping_select").value;
             if (this.current_cap == 'qual') {
                 if (['mean', 'mean_variable', 'max'].includes(this.current_mode)) {
-                    console.log("Cap doesn't make sense here")
                     document.getElementById("capping_select").value='none';
                     this.current_cap = 'none';
                     this.isCheckedCappedMacro = false;
@@ -310,7 +333,6 @@ const app = Vue.createApp({
                 }
             } else if (this.current_cap == 'macro') {
                 if (['mean', 'mean_variable', 'max'].includes(this.current_mode)) {
-                    console.log("Cap doesn't make sense here")
                     document.getElementById("capping_select").value='none';
                     this.current_cap = 'none';
                     this.isCheckedCappedMacro = false;
@@ -1058,16 +1080,32 @@ const app = Vue.createApp({
                     //cap to qualitative value macrovector score
                     //only lower bound needed
                     if(qual_value_macrovector=="Low"){
-                        value = 0.1
+                        if (value > 3.9) {
+                            value = 3.9;
+                        } else if (value < 0.1) {
+                            value = 0.1;
+                        }
                     }
                     else if(qual_value_macrovector=="Medium"){
-                        value = 4.0
+                        if (value > 6.9) {
+                            value = 6.9;
+                        } else if (value < 4.0) {
+                            value = 4.0;
+                        }
                     }
                     else if(qual_value_macrovector=="High"){
-                        value = 7.0
+                        if (value > 8.9) {
+                            value = 8.9;
+                        } else if (value < 7.0) {
+                            value = 7.0;
+                        }
                     }
                     else if(qual_value_macrovector=="Critical"){
-                        value = 9.0
+                        if (value > 10.0) {
+                            value = 10.0;
+                        } else if (value < 9.0) {
+                            value = 9.0;
+                        }
                     }
                 }
             }
