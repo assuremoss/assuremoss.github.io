@@ -38,7 +38,7 @@ const app = Vue.createApp({
             currentLookup: "base",
             lookupMap: {
                 "base":cvssLookup, 
-                "adjusted":cvssLookup_adjusted,
+                "adjusted":cvssLookup_adjusted_global,//cvssLookup_adjusted,
                 "linear_clust":cvssLookup_cluster_mean,
                 "linear":cvssLookup_linear,
                 "rank":cvssLookup_rank_bin,
