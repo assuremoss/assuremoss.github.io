@@ -152,6 +152,22 @@ const app = Vue.createApp({
                 return this.enviro_default;
             }
 
+            //if (metric=='SI' && selected=='S') {
+            //    this.cvssSelected['MSI'] = "S"
+            //    this.cvssSelected[metric] = "H";
+            //}
+            //if (metric=="SA" && selected=="S") {
+            //    this.cvssConfig["MSA"] = "S"
+            //    this.cvssSelected[metric] = "H";
+            //}
+            if (metric=='MSI' && selected=='X' && this.cvssSelected['SI']=="S"){
+                return "S"
+            }
+
+            if (metric=='MSA' && selected=='X' && this.cvssSelected['SA']=="S"){
+                return "S"
+            }
+
             // All other environmental metrics just overwrite base score values,
             // so if they’re not defined just use the base score value.
             if(Object.keys(this.cvssSelected).includes("M" + metric)) {
@@ -211,7 +227,7 @@ const app = Vue.createApp({
                     this.onAdjustmentSelect();
                     break;
                 case "var_cap_up":
-                    document.getElementById("dataset_select").value = 'linear_clust';
+                    document.getElementById("dataset_select").value = 'rank';
                     this.onChangeDataSelect();
                     document.getElementById("mode_select").value = 'weighted';
                     this.onChangeModeSelect();
