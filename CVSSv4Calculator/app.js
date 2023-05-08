@@ -856,11 +856,13 @@ const app = Vue.createApp({
                 maxHamming_eq2 = this.maxHammingVariableData['eq2'][String(eq2_val)]
                 maxHamming_eq3eq6 = this.maxHammingVariableData['eq3'][String(eq3_val)][String(eq6_val)]
                 maxHamming_eq4 = this.maxHammingVariableData['eq4'][String(eq4_val)]
+                maxHamming_eq5 = 0;
             } else {
                 maxHamming_eq1 = this.maxHammingData['eq1'][String(eq1_val)]*0.1
                 maxHamming_eq2 = this.maxHammingData['eq2'][String(eq2_val)]*0.1
                 maxHamming_eq3eq6 = this.maxHammingData['eq3'][String(eq3_val)][String(eq6_val)]*0.1
                 maxHamming_eq4 = this.maxHammingData['eq4'][String(eq4_val)]*0.1
+                maxHamming_eq5 = 0;
             }
 
             //if the next lower macro score do not exist the result is Nan
@@ -898,6 +900,11 @@ const app = Vue.createApp({
                     available_distance_eq4 = (value - score_eq4_next_lower_macro)/2;
                 } else {
                     available_distance_eq4 = (score_eq4_next_higher_macro - value)/2;
+                }
+                if (current_hamming_distance_eq5 > maxHamming_eq5/2){
+                    available_distance_eq5 = (value - score_eq5_next_lower_macro)/2;
+                } else {
+                    available_distance_eq5 = (score_eq5_next_higher_macro - value)/2;
                 }
             }
 
