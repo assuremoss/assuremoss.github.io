@@ -2,9 +2,7 @@ Deployed at: https://assuremoss.github.io/CVSSv4Calculator/index.html
 
 Forked from: https://github.com/RedHatProductSecurity/cvss-v4-calculator
 
-@Algorithm [Fabio Massacci](https://fabiomassacci.github.io/) (University of Trento and Vrije Universiteit Amsterdam), [Giorgio Di Tizio](https://giorgioditizio.github.io/) (University of Trento), 
-     
-Acknowledgements to Ben Edwards (Cyenthia) Mode 5, Jonathan Spring (DHS), Peter Mell (NIST) idea of mode 3
+Contributors Ben Edwards (Cyenthia), Giorgio Di Tizio (UTrento), Fabio Massacci (UTrento, VU Amsterdam), Peter Mell (NIST) idea of mode 3, eqsets Jono Spring (CISA).
                    
 How it works:
 
