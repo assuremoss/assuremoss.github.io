@@ -788,21 +788,6 @@ const app = Vue.createApp({
                 return "0.0"
             }
 
-            console.log(["Higher",
-                score_eq1_next_higher_macro, 
-                score_eq2_next_higher_macro, 
-                score_eq3eq6_next_higher_macro, 
-                score_eq4_next_higher_macro, 
-                score_eq5_next_higher_macro
-            ]);
-
-            console.log(["Lower",
-                score_eq1_next_lower_macro, 
-                score_eq2_next_lower_macro, 
-                score_eq3eq6_next_lower_macro, 
-                score_eq4_next_lower_macro, 
-                score_eq5_next_lower_macro
-            ]);
 
             // mode 2 and 5: hamming distance (0.1 step or weighted)
             for (let i = 0; i < max_vectors.length; i++) {
@@ -880,27 +865,13 @@ const app = Vue.createApp({
                 maxHamming_eq4 = this.maxHammingData['eq4'][String(eq4_val)]*0.1
                 maxHamming_eq5 = 0;
             }
-            console.log(["Max Hamming",
-                maxHamming_eq1,
-                maxHamming_eq2, 
-                maxHamming_eq3eq6,
-                maxHamming_eq4, 
-                maxHamming_eq5]);
 
-            console.log([
-                "Current Hamming", 
-                current_hamming_distance_eq1,
-                current_hamming_distance_eq2,
-                current_hamming_distance_eq3eq6,
-                current_hamming_distance_eq4,
-                current_hamming_distance_eq5
-            ]);
+            hamming_mid_eq1 = maxHamming_eq1/2;
+            hamming_mid_eq2 = maxHamming_eq2/2;
+            hamming_mid_eq36 = maxHamming_eq3eq6/2;
+            hamming_mid_eq4 = maxHamming_eq4/2;
+            hamming_mid_eq5 = maxHamming_eq5/2;
 
-            middle_out_dir_eq1=null;
-            middle_out_dir_eq2=null;
-            middle_out_dir_eq36=null;
-            middle_out_dir_eq4=null;
-            middle_out_dir_eq5=null;
 
             //if the next lower macro score do not exist the result is Nan
             if (this.isClickAdjustDown) {
@@ -917,51 +888,114 @@ const app = Vue.createApp({
                 available_distance_eq5 =  score_eq5_next_higher_macro - value;
             } else {
                 //Down further than halfway, so increase
-                if (current_hamming_distance_eq1 > maxHamming_eq1/2){
-                    available_distance_eq1 = (value - score_eq1_next_lower_macro)/2;
-                    middle_out_dir_eq1 = 'down';
-                } else { 
-                    available_distance_eq1 = (score_eq1_next_higher_macro - value)/2;
-                    middle_out_dir_eq1 = 'up';
-                }
-
-                if (current_hamming_distance_eq2 > maxHamming_eq2/2){
-                    available_distance_eq2 = (value - score_eq2_next_lower_macro)/2;
-                    middle_out_dir_eq2 = 'down';
+                if (current_hamming_distance_eq1 > hamming_mid_eq1){
+                    if (isNaN(score_eq1_next_lower_macro)) {
+                        if (value - hamming_mid_eq1 < 0) {
+                            available_distance_eq1 = value;
+                        } else {
+                            available_distance_eq1 = hamming_mid_eq1;
+                        }
+                    } else {
+                        available_distance_eq1 = (value - score_eq1_next_lower_macro)/2;
+                    }
                 } else {
-                    available_distance_eq2 = (score_eq2_next_higher_macro - value)/2;
-                    middle_out_dir_eq2 = 'up';
+                    if (isNaN(score_eq1_next_higher_macro)) {
+                        if (value + hamming_mid_eq1 > 10) {
+                            available_distance_eq1 = 10 - value;
+                        } else {
+                            available_distance_eq1 = hamming_mid_eq1;
+                        }
+                    } else {
+                        available_distance_eq1 = (score_eq1_next_higher_macro - value)/2;
+                    }
                 }
-                if (current_hamming_distance_eq3eq6 > maxHamming_eq3eq6/2){
-                    available_distance_eq3eq6 = (value - score_eq3eq6_next_lower_macro)/2;
-                    middle_out_dir_eq36 = 'down';
+                if (current_hamming_distance_eq2 > hamming_mid_eq2){
+                    if (isNaN(score_eq2_next_lower_macro)) {
+                        if (value - hamming_mid_eq2 < 0) {
+                            available_distance_eq2 = value;
+                        } else {
+                            available_distance_eq2 = hamming_mid_eq2;
+                        }
+                    } else {
+                        available_distance_eq2 = (value - score_eq2_next_lower_macro)/2;
+                    }
                 } else {
-                    available_distance_eq3eq6 = (score_eq3eq6_next_higher_macro - value)/2;
-                    middle_out_dir_eq36 = 'up';
+                    if (isNaN(score_eq2_next_higher_macro)) {
+                        if (value + hamming_mid_eq2 > 10) {
+                            available_distance_eq2 = 10 - value;
+                        } else {
+                            available_distance_eq2 = hamming_mid_eq2;
+                        }
+                    } else {
+                        available_distance_eq2 = (score_eq2_next_higher_macro - value)/2;
+                    }
                 }
-                if (current_hamming_distance_eq4 > maxHamming_eq4/2){
-                    available_distance_eq4 = (value - score_eq4_next_lower_macro)/2;
-                    middle_out_dir_eq4 = 'down';
+                if (current_hamming_distance_eq3eq6 > hamming_mid_eq36){
+                    if (isNaN(score_eq3eq6_next_lower_macro)) {
+                        console.log("NUILLL 36")
+                        if (value - hamming_mid_eq36 < 0) {
+                            available_distance_eq3eq6 = value;
+                        } else {
+                            available_distance_eq3eq6 = hamming_mid_eq36;
+                        }
+                    } else {
+                        available_distance_eq3eq6 = (value - score_eq3eq6_next_lower_macro)/2;
+                    }
                 } else {
-                    available_distance_eq4 = (score_eq4_next_higher_macro - value)/2;
-                    middle_out_dir_eq4 = 'up';
+                    if (isNaN(score_eq3eq6_next_higher_macro)) {
+                        console.log("NULL 36")
+                        if (value + hamming_mid_eq36 > 10) {
+                            available_distance_eq3eq6 = 10 - value;
+                        } else {
+                            available_distance_eq3eq6 = hamming_mid_eq1;
+                        }
+                    } else {
+                        available_distance_eq3eq6 = (score_eq3eq6_next_higher_macro - value)/2;
+                    }
                 }
-                if (current_hamming_distance_eq5 > maxHamming_eq5/2){
-                    available_distance_eq5 = (value - score_eq5_next_lower_macro)/2;
-                    middle_out_dir_eq5 = 'down';
+                if (current_hamming_distance_eq4 > hamming_mid_eq4){
+                    if (isNaN(score_eq4_next_lower_macro)) {
+                        if (value - hamming_mid_eq4 < 0) {
+                            available_distance_eq4 = value;
+                        } else {
+                            available_distance_eq4 = hamming_mid_eq4;
+                        }
+                    } else {
+                        available_distance_eq4 = (value - score_eq4_next_lower_macro)/2;
+                    }
                 } else {
-                    available_distance_eq5 = (score_eq5_next_higher_macro - value)/2;
-                    middle_out_dir_eq5 = 'up';
+                    if (isNaN(score_eq4_next_higher_macro)) {
+                        if (value + hamming_mid_eq4 > 10) {
+                            available_distance_eq4 = 10 - value;
+                        } else {
+                            available_distance_eq4 = hamming_mid_eq4;
+                        }
+                    } else {
+                        available_distance_eq4 = (score_eq4_next_higher_macro - value)/2;
+                    }
+                }
+                if (current_hamming_distance_eq5 > hamming_mid_eq5){
+                    if (isNaN(score_eq5_next_lower_macro)) {
+                        if (value - hamming_mid_eq5 < 0) {
+                            available_distance_eq5 = value;
+                        } else {
+                            available_distance_eq5 = hamming_mid_eq2;
+                        }
+                    } else {
+                        available_distance_eq5 = (value - score_eq5_next_lower_macro)/2;
+                    }
+                } else {
+                    if (isNaN(score_eq5_next_higher_macro)) {
+                        if (value + hamming_mid_eq5 > 10) {
+                            available_distance_eq5 = 10 - value;
+                        } else {
+                            available_distance_eq5 = hamming_mid_eq5;
+                        }
+                    } else {
+                        available_distance_eq5 = (score_eq5_next_higher_macro - value)/2;
+                    }
                 }
             }
-
-            console.log(["Available Distance",
-                available_distance_eq1,
-                available_distance_eq2,
-                available_distance_eq3eq6,
-                available_distance_eq4,
-                available_distance_eq5
-            ]);
 
             
             if (this.isClickAdjustUp) {                
@@ -970,20 +1004,12 @@ const app = Vue.createApp({
                 current_hamming_distance_eq3eq6 = current_hamming_distance_eq3eq6 - maxHamming_eq3eq6 
                 current_hamming_distance_eq4 =  current_hamming_distance_eq4 - maxHamming_eq4
             } else if(this.isClickAdjustMiddle) {
-                current_hamming_distance_eq1 =  current_hamming_distance_eq1 - maxHamming_eq1/2 
-                current_hamming_distance_eq2 =  current_hamming_distance_eq2 - maxHamming_eq2/2 
-                current_hamming_distance_eq3eq6 =  current_hamming_distance_eq3eq6 - maxHamming_eq3eq6/2 
-                current_hamming_distance_eq4 =  current_hamming_distance_eq4 - maxHamming_eq4/2 
+                current_hamming_distance_eq1 =  current_hamming_distance_eq1 - hamming_mid_eq1; 
+                current_hamming_distance_eq2 = current_hamming_distance_eq2 - hamming_mid_eq2;
+                current_hamming_distance_eq3eq6 =  current_hamming_distance_eq3eq6 - hamming_mid_eq36
+                current_hamming_distance_eq4 =  current_hamming_distance_eq4 - hamming_mid_eq4; 
             }
 
-            console.log([
-                "Adjusted Current Hamming", 
-                current_hamming_distance_eq1,
-                current_hamming_distance_eq2,
-                current_hamming_distance_eq3eq6,
-                current_hamming_distance_eq4,
-                current_hamming_distance_eq5
-            ]);
             percent_to_next_eq1_hamming = 0
             percent_to_next_eq2_hamming = 0
             percent_to_next_eq3eq6_hamming = 0
@@ -1055,23 +1081,15 @@ const app = Vue.createApp({
                     //adjust size to avoid 100% coverage using available distance
                     if(available_distance_eq1>0.1){
                         available_distance_eq1 = available_distance_eq1 - step
-                    } else {
-                        available_distance_eq1 = 0;
                     }
                     if(available_distance_eq2>0.1){
                         available_distance_eq2 = available_distance_eq2 - step
-                    } else {
-                        available_distance_eq2 = 0;
-                    }
+                    } 
                     if(available_distance_eq3eq6>0.1){
                         available_distance_eq3eq6 = available_distance_eq3eq6 - step
-                    } else {
-                        available_distance_eq3eq6 = 0;
-                    }
+                    } 
                     if(available_distance_eq4>0.1){
                         available_distance_eq4 = available_distance_eq4 - step
-                    } else {
-                        available_distance_eq4 = 0;
                     }
 
                     maxHamming_eq1 = this.maxHammingVariableData['eq1'][String(eq1_val)]
@@ -1094,6 +1112,33 @@ const app = Vue.createApp({
                     maxHamming_eq3eq6 = maxHamming_eq3eq6/2
                     maxHamming_eq4 = maxHamming_eq4/2
                 }
+                console.log([
+                    "Current dist mean",
+                    current_hamming_distance_eq1,
+                    current_hamming_distance_eq2,
+                    current_hamming_distance_eq3eq6,
+                    current_hamming_distance_eq4,
+                    current_hamming_distance_eq5
+                ]);
+
+                console.log([
+                    "Max Distance",
+                    maxHamming_eq1,
+                    maxHamming_eq2,
+                    maxHamming_eq3eq6,
+                    maxHamming_eq4,
+                    maxHamming_eq5
+                ]);
+
+                console.log([
+                    "Availabel distance",
+                    available_distance_eq1,
+                    available_distance_eq2,
+                    available_distance_eq3eq6,
+                    available_distance_eq4,
+                    available_distance_eq5
+                ]);
+    
 
                 if (!isNaN(available_distance_eq1)){
                     n_existing_lower=n_existing_lower+1
@@ -1147,6 +1192,15 @@ const app = Vue.createApp({
                     
                     normalized_hamming_eq5 = available_distance_eq5*percent_to_next_eq5_hamming
                 }
+
+                console.log([
+                    "norm distance",
+                    normalized_hamming_eq1, 
+                    normalized_hamming_eq2,
+                    normalized_hamming_eq3eq6,
+                    normalized_hamming_eq4,
+                    normalized_hamming_eq5
+                ])
                 //console.log("#############")
                 if (n_existing_lower==0) {
                     mean_distance = 0
