@@ -932,7 +932,6 @@ const app = Vue.createApp({
                 }
                 if (current_hamming_distance_eq3eq6 > hamming_mid_eq36){
                     if (isNaN(score_eq3eq6_next_lower_macro)) {
-                        console.log("NUILLL 36")
                         if (value - hamming_mid_eq36 < 0) {
                             available_distance_eq3eq6 = value;
                         } else {
@@ -943,7 +942,6 @@ const app = Vue.createApp({
                     }
                 } else {
                     if (isNaN(score_eq3eq6_next_higher_macro)) {
-                        console.log("NULL 36")
                         if (value + hamming_mid_eq36 > 10) {
                             available_distance_eq3eq6 = 10 - value;
                         } else {
@@ -1112,32 +1110,6 @@ const app = Vue.createApp({
                     maxHamming_eq3eq6 = maxHamming_eq3eq6/2
                     maxHamming_eq4 = maxHamming_eq4/2
                 }
-                console.log([
-                    "Current dist mean",
-                    current_hamming_distance_eq1,
-                    current_hamming_distance_eq2,
-                    current_hamming_distance_eq3eq6,
-                    current_hamming_distance_eq4,
-                    current_hamming_distance_eq5
-                ]);
-
-                console.log([
-                    "Max Distance",
-                    maxHamming_eq1,
-                    maxHamming_eq2,
-                    maxHamming_eq3eq6,
-                    maxHamming_eq4,
-                    maxHamming_eq5
-                ]);
-
-                console.log([
-                    "Availabel distance",
-                    available_distance_eq1,
-                    available_distance_eq2,
-                    available_distance_eq3eq6,
-                    available_distance_eq4,
-                    available_distance_eq5
-                ]);
     
 
                 if (!isNaN(available_distance_eq1)){
@@ -1193,14 +1165,6 @@ const app = Vue.createApp({
                     normalized_hamming_eq5 = available_distance_eq5*percent_to_next_eq5_hamming
                 }
 
-                console.log([
-                    "norm distance",
-                    normalized_hamming_eq1, 
-                    normalized_hamming_eq2,
-                    normalized_hamming_eq3eq6,
-                    normalized_hamming_eq4,
-                    normalized_hamming_eq5
-                ])
                 //console.log("#############")
                 if (n_existing_lower==0) {
                     mean_distance = 0
