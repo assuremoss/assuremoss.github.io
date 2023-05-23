@@ -18,19 +18,19 @@ const app = Vue.createApp({
             showOptions: false,
             cvssSelected: null,
             header_height: 0,
-            current_cap: "none",
+            current_cap: "macro",
             isCheckedCappedQualitative: false,
-            isCheckedCappedMacro: false,
-            current_mode: "max",// For later to get rid of the booleans
+            isCheckedCappedMacro: true,
+            current_mode: "minimal",// For later to get rid of the booleans
             isCheckedWeighted: false,
             isCheckedMean: false,
             isCheckedMeanVariable: false,
-            isCheckedMaxValue: true,
-            isCheckedMinimal: false,
+            isCheckedMaxValue: false,
+            isCheckedMinimal: true,
             isClickAdjustDown: false,
-            isClickAdjustMiddle: true,
-            isClickAdjustUp: false,
-            current_adjust: "middle", // For later to get rid of booleans
+            isClickAdjustMiddle: false,
+            isClickAdjustUp: true,
+            current_adjust: "up", // For later to get rid of booleans
             enviro_default: "M",
             cvssMaxVector: null,
             max_base_value: 0.0,
@@ -865,6 +865,13 @@ const app = Vue.createApp({
                 maxHamming_eq4 = this.maxHammingData['eq4'][String(eq4_val)]*0.1
                 maxHamming_eq5 = 0;
             }
+            console.log([
+                maxHamming_eq1,
+                maxHamming_eq2,
+                maxHamming_eq3eq6,
+                maxHamming_eq4,
+                maxHamming_eq5
+            ]);
 
             hamming_mid_eq1 = maxHamming_eq1/2;
             hamming_mid_eq2 = maxHamming_eq2/2;
@@ -891,6 +898,7 @@ const app = Vue.createApp({
                 if (current_hamming_distance_eq1 > hamming_mid_eq1){
                     if (isNaN(score_eq1_next_lower_macro)) {
                         if (value - hamming_mid_eq1 < 0) {
+                            console.log("capping 1 at 0'")
                             available_distance_eq1 = value;
                         } else {
                             available_distance_eq1 = hamming_mid_eq1;
@@ -901,6 +909,7 @@ const app = Vue.createApp({
                 } else {
                     if (isNaN(score_eq1_next_higher_macro)) {
                         if (value + hamming_mid_eq1 > 10) {
+                            console.log('capping 1 at 10')
                             available_distance_eq1 = 10 - value;
                         } else {
                             available_distance_eq1 = hamming_mid_eq1;
@@ -912,6 +921,7 @@ const app = Vue.createApp({
                 if (current_hamming_distance_eq2 > hamming_mid_eq2){
                     if (isNaN(score_eq2_next_lower_macro)) {
                         if (value - hamming_mid_eq2 < 0) {
+                            console.log('capping 2 at 0')
                             available_distance_eq2 = value;
                         } else {
                             available_distance_eq2 = hamming_mid_eq2;
@@ -922,6 +932,7 @@ const app = Vue.createApp({
                 } else {
                     if (isNaN(score_eq2_next_higher_macro)) {
                         if (value + hamming_mid_eq2 > 10) {
+                            console.log('capping 2 at 10')
                             available_distance_eq2 = 10 - value;
                         } else {
                             available_distance_eq2 = hamming_mid_eq2;
@@ -933,6 +944,7 @@ const app = Vue.createApp({
                 if (current_hamming_distance_eq3eq6 > hamming_mid_eq36){
                     if (isNaN(score_eq3eq6_next_lower_macro)) {
                         if (value - hamming_mid_eq36 < 0) {
+                            console.log("capping 36 at 0")
                             available_distance_eq3eq6 = value;
                         } else {
                             available_distance_eq3eq6 = hamming_mid_eq36;
@@ -943,6 +955,7 @@ const app = Vue.createApp({
                 } else {
                     if (isNaN(score_eq3eq6_next_higher_macro)) {
                         if (value + hamming_mid_eq36 > 10) {
+                            console.log('capping 36 at 10')
                             available_distance_eq3eq6 = 10 - value;
                         } else {
                             available_distance_eq3eq6 = hamming_mid_eq1;
@@ -954,6 +967,7 @@ const app = Vue.createApp({
                 if (current_hamming_distance_eq4 > hamming_mid_eq4){
                     if (isNaN(score_eq4_next_lower_macro)) {
                         if (value - hamming_mid_eq4 < 0) {
+                            console.log("Capping 4 at 0")
                             available_distance_eq4 = value;
                         } else {
                             available_distance_eq4 = hamming_mid_eq4;
@@ -964,6 +978,7 @@ const app = Vue.createApp({
                 } else {
                     if (isNaN(score_eq4_next_higher_macro)) {
                         if (value + hamming_mid_eq4 > 10) {
+                            console.log("capping 4 at 10")
                             available_distance_eq4 = 10 - value;
                         } else {
                             available_distance_eq4 = hamming_mid_eq4;
@@ -975,6 +990,7 @@ const app = Vue.createApp({
                 if (current_hamming_distance_eq5 > hamming_mid_eq5){
                     if (isNaN(score_eq5_next_lower_macro)) {
                         if (value - hamming_mid_eq5 < 0) {
+                            console.log("Capping 5 at 0")
                             available_distance_eq5 = value;
                         } else {
                             available_distance_eq5 = hamming_mid_eq2;
@@ -985,6 +1001,7 @@ const app = Vue.createApp({
                 } else {
                     if (isNaN(score_eq5_next_higher_macro)) {
                         if (value + hamming_mid_eq5 > 10) {
+                            console.log("Capping 5 at 10")
                             available_distance_eq5 = 10 - value;
                         } else {
                             available_distance_eq5 = hamming_mid_eq5;
@@ -995,8 +1012,15 @@ const app = Vue.createApp({
                 }
             }
 
-            
-            if (this.isClickAdjustUp) {                
+            console.log([
+                "Before adjust",
+                current_hamming_distance_eq1,
+                current_hamming_distance_eq2,
+                current_hamming_distance_eq3eq6,
+                current_hamming_distance_eq4,
+                current_hamming_distance_eq5
+            ])
+            if (this.isClickAdjustUp) {
                 current_hamming_distance_eq1 =  current_hamming_distance_eq1 - maxHamming_eq1 
                 current_hamming_distance_eq2 =  current_hamming_distance_eq2 - maxHamming_eq2
                 current_hamming_distance_eq3eq6 = current_hamming_distance_eq3eq6 - maxHamming_eq3eq6 
@@ -1007,6 +1031,14 @@ const app = Vue.createApp({
                 current_hamming_distance_eq3eq6 =  current_hamming_distance_eq3eq6 - hamming_mid_eq36
                 current_hamming_distance_eq4 =  current_hamming_distance_eq4 - hamming_mid_eq4; 
             }
+            console.log([
+                "After adjust",
+                current_hamming_distance_eq1,
+                current_hamming_distance_eq2,
+                current_hamming_distance_eq3eq6,
+                current_hamming_distance_eq4,
+                current_hamming_distance_eq5
+            ])
 
             percent_to_next_eq1_hamming = 0
             percent_to_next_eq2_hamming = 0
@@ -1024,32 +1056,40 @@ const app = Vue.createApp({
 
                     if(Math.abs(current_hamming_distance_eq1)>available_distance_eq1){
                         //cap to max changes
-                        sum_hamming_distance+=available_distance_eq1*Math.sign(current_hamming_distance_eq1);
+                        //console.log("Capping Eq1 Was: " + current_hamming_distance_eq1, " is now ",available_distance_eq1*Math.sign(current_hamming_distance_eq1))
+                        sum_hamming_distance+= available_distance_eq1*Math.sign(current_hamming_distance_eq1);
                     }
                     else{
                         //we fall here if either max_change is NaN or because space is enough
+                        //console.log("No Cap eq1: " + current_hamming_distance_eq1)
                         sum_hamming_distance+=current_hamming_distance_eq1
                     }
 
                     if(Math.abs(current_hamming_distance_eq2)>available_distance_eq2){
+                        //console.log("Capping Eq2 Was: " + current_hamming_distance_eq2, " is now ",available_distance_eq2*Math.sign(current_hamming_distance_eq2))
                         sum_hamming_distance+=available_distance_eq2*Math.sign(current_hamming_distance_eq2)
                     }
                     else{
+                        //console.log("No Cap eq2: " + current_hamming_distance_eq2)
                         sum_hamming_distance+=current_hamming_distance_eq2
                     }
 
                     if(Math.abs(current_hamming_distance_eq3eq6)>available_distance_eq3eq6){
+                        //console.log("Capping Eq36 Was: " + current_hamming_distance_eq3eq6, " is now ",available_distance_eq3eq6*Math.sign(current_hamming_distance_eq3eq6))
                         sum_hamming_distance+=available_distance_eq3eq6*Math.sign(current_hamming_distance_eq3eq6)
                     }
                     else{
+                        //console.log("No Cap eq36: " + current_hamming_distance_eq3eq6)
                         sum_hamming_distance+=current_hamming_distance_eq3eq6
                     }
 
                     if(Math.abs(current_hamming_distance_eq4)>available_distance_eq4){
-                        sum_hamming_distance+=available_distance_eq4
+                        //console.log("Capping Eq4 Was: " + current_hamming_distance_eq4, " is now ",available_distance_eq4*Math.sign(current_hamming_distance_eq4))
+                        sum_hamming_distance+=available_distance_eq4*Math.sign(current_hamming_distance_eq4);
                     }
                     else{
-                        sum_hamming_distance+=current_hamming_distance_eq4*Math.sign(current_hamming_distance_eq4)
+                        //console.log("No Cap eq4: " + current_hamming_distance_eq4)
+                        sum_hamming_distance+=current_hamming_distance_eq4
                     }
 
                 }
@@ -1058,6 +1098,7 @@ const app = Vue.createApp({
                     //sum_hamming_distance = hamming_distance_AV + hamming_distance_PR + hamming_distance_UI + hamming_distance_AC + hamming_distance_AT + hamming_distance_VC + hamming_distance_VI + hamming_distance_VA + hamming_distance_SC + hamming_distance_SI + hamming_distance_SA + hamming_distance_CR + hamming_distance_IR + hamming_distance_AR
                     sum_hamming_distance = current_hamming_distance_eq1 + current_hamming_distance_eq2 + current_hamming_distance_eq3eq6 + current_hamming_distance_eq4;
                 }
+                console.log([value, sum_hamming_distance]);
                 value = parseFloat(value) - parseFloat(sum_hamming_distance)
             }
             else{

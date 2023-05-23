@@ -82,8 +82,8 @@
                 Macrovector Adjustment Mode
                 <h6>
                     <select id="mode_select" @change="onChangeModeSelect()">
-                        <option value="max" selected> <b>Mode 0</b>: Raw Elo Score of Macro Vector</option>
-                        <option value="minimal"><b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)</option>
+                        <option value="max"> <b>Mode 0</b>: Raw Elo Score of Macro Vector</option>
+                        <option value="minimal" selected><b>Mode 2</b>: Minimal Change (0.1 * Hamming Distance)</option>
                         <option value="mean"><b>Mode 3</b>: Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Hamming Distance)</option>
                         <option value="weighted"><b>Mode 5</b>: Variable Change (Weighted Hamming Distance)</option>
                         <option value="mean_variable"><b>Mode 6</b>: Variable Mean Progress Towards Lower Macro Vector(s) (Mean Proportional Weighted Hamming Distance)</option>
@@ -104,8 +104,8 @@
                 <h6>
                     Macrovectors can be adjusted from the minimal vector upwards (increasing the score) or down from the maximal vector within an equivalence class value. As an alternative they can also be adjusted from the middle out.</h6>
                     <select id="adjustment_mode_select" @change="onAdjustmentSelect()">
-                        <option value="up">Up</option>
-                        <option value="middle" selected>Middle Out</option>
+                        <option value="up" selected>Up</option>
+                        <option value="middle">Middle Out</option>
                         <option value="down">Down</option>
                     </select> 
                 <h5>
@@ -121,9 +121,9 @@
                     Capping
                 <h6>The scores above are "free" to change and to go beyond the lower levels. If you want them capped tick your preferred option.<br>
                     <select id="capping_select" @change="onCappingChange()">
-                        <option value="none" selected>None</option>
+                        <option value="none">None</option>
                         <option value="qual">Max Change Bounded to Qualitative Score</option>
-                        <option value="macro">Max Change Bounded to MacroVector</option>
+                        <option value="macro" selected>Max Change Bounded to MacroVector</option>
                     </select>
                 </h6>
                 </h5>
