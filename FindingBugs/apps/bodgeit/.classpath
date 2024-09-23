@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="build/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="build/WEB-INF/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="lib/ant.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.6.jar"/>
+	<classpathentry kind="lib" path="lib/selenium-server-standalone-2.43.0.jar"/>
+	<classpathentry kind="lib" path="lib/zap-api-v2-9.jar"/>
+	<classpathentry kind="lib" path="root/WEB-INF/lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="root/WEB-INF/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="root/WEB-INF/lib/servlet-api.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

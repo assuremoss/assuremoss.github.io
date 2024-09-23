@@ -1,0 +1,13 @@
+[
+	{
+		"algorithm": "HS256",
+		"strength": "LOW",
+		"key": "password"
+	},
+	{
+		"algorithm": "HS256",
+		"strength": "HIGH",
+		"key": "12309jansdu912jnas^90nqwq!@!#oqihr82343n"
+	}
+	
+]
